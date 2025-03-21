@@ -1,0 +1,43 @@
+name: Rydepro Admin Web App
+on:
+  push:
+    branches: ['abasay']
+  pull_request:
+    branches: ['abasay']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Clear Package Cache
+        run: npm cache clean --force
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Git Pull and Build
+        uses: appleboy/ssh-action@master
+        with:
+          host: '${{ secrets.HOST }}'
+          username: '${{ secrets.USERNAME }}'
+          password: '${{ secrets.PASSWORD }}'
+          key: '${{ secrets.SSH_KEY }}'
+          port: 22
+          script: |
+            cd /home/hotbitxrp21/public_html/admin
+            git checkout abasay
+            git pull origin abasay
+            npm install
+            npm run build
+            cd /home/hotbitxrp21/public_html/admin/out && rsync -a * /home/hotbitxrp21/public_html/admin
+            cd /home/hotbitxrp21/public_html/admin && rm -rf .next out

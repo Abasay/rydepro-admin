@@ -1,0 +1,34 @@
+/**
+ * styles.css or your component's CSS module
+ *
+ * @format
+ */
+
+.toggle-switch {
+  width: 48px;
+  height: 28px;
+  background-color: #ccc;
+  border-radius: 15px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-switch.active {
+  background-color: #4caf50;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  transition: left 0.3s ease;
+}
+
+.toggle-switch.active .circle {
+  left: 24px;
+}
