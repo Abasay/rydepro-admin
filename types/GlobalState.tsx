@@ -60,4 +60,29 @@ export interface GeneralDashboardContext {
   setAuthChanged: (type: string) => void;
   passPhrases: string[];
   setPassphrases: (passphrases: []) => void;
+  adminDetails: AdminDetails | null;
+  setAdminDetails: ({}: AdminDetails | null) => void;
+  getAdmin: () => void;
+}
+
+export interface AdminDetails {
+  id: string;
+  email: string;
+  username: string;
+  employeeId: string;
+  role: string;
+  authEnabled: boolean | null;
+  devices: {
+    deviceId: string;
+    deviceName: string;
+    deviceType: string;
+    status?: string;
+    logInFrom?: string;
+    dateAdded?: string;
+    lastLogInDate?: string;
+  }[];
+  location: string | null;
+  webAuthN: string | null;
+  createdAt: string;
+  updatedAt: string;
 }

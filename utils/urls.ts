@@ -18,6 +18,7 @@ export const AdminUrls = {
   verifySecurities: '/admin/verify-securities',
   changePinCode: '/admin/change-pincode',
   changePassphrase: '/admin/change-passphrase',
+  allUsers: '/admin/all-users',
 
   //Forgot Password
   recoveryEmail: '/auth/admin/recovery-email',

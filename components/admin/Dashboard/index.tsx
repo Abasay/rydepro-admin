@@ -32,6 +32,7 @@ import { URLS } from '@/utils/lib/urls';
 import SuccessModal from '../Success';
 import ErrorModal from '../ErrorModal';
 import { DELETE_REQUEST, GET_REQUEST, POST_REQUEST } from '@/utils/lib/server-requests';
+import Zone from './Zone';
 
 const USERHEADERS = ['All Users', 'Individual', 'Organization'];
 export const DRIVERHEADERS = ['All Drivers', 'Livery Company', 'Chauffeur Drivers', 'TNC'];
@@ -260,7 +261,7 @@ const Dashboard = () => {
           </>
         )} */}
 
-        <div className=' absolute -top-10 z-50 w-full mx-auto grid place-content-center'>
+        <div className=" absolute -top-10 z-50 w-full mx-auto grid place-content-center">
           {successText && <SuccessModal text={successText} handleClose={() => setSuccessText('')} />}
           {errorText && <ErrorModal text={errorText} handleClose={() => setErrorText('')} />}
         </div>
@@ -273,16 +274,16 @@ const Dashboard = () => {
           } bg-[#F7F7F7]  min-h-full flex relative  filter transition duration-500 `}
         >
           {showModal && (
-            <div className=' absolute border left-[5%] right-[5%] top-[20%] bottom-[10%] border-[#FFFFFF] rounded-3xl z-50 bg-[#FFFFFF] grid place-content-center min-w-[2902px] max-w-[2902px] mx-auto h-[1486px]'>
+            <div className=" absolute border left-[5%] right-[5%] top-[20%] bottom-[10%] border-[#FFFFFF] rounded-3xl z-50 bg-[#FFFFFF] grid place-content-center min-w-[2902px] max-w-[2902px] mx-auto h-[1486px]">
               <Setup setShowModal={setShowModal} selectedVehicle={selectedVehicle} />
             </div>
           )}
           {showModal && (
-            <div className=' min-w-full max-3000:min-w-[3000px] max-3000:min-h-[1580px] min-h-full grid place-content-center  h-[100vh] bg-[#00000099] absolute z-40'></div>
+            <div className=" min-w-full max-3000:min-w-[3000px] max-3000:min-h-[1580px] min-h-full grid place-content-center  h-[100vh] bg-[#00000099] absolute z-40"></div>
           )}{' '}
-          <div className='w-full flex gap-0  border'>
+          <div className="w-full flex gap-0  border">
             <Sidebar />
-            <div className='w-full overflow-scroll scrollbar-hide flex flex-col min-h-[873px] max-h-[873px]'>
+            <div className="w-full overflow-scroll scrollbar-hide flex flex-col min-h-[873px] max-h-[873px]">
               {/* <Header /> */}
               <DBHeader />
               {/**Settings */}
@@ -307,13 +308,15 @@ const Dashboard = () => {
                   deleteService={deleteService}
                 />
               )}
+
+              {activeHeader === 'Zone' && <Zone />}
               {/* {activeHeader === 'Vehicle' && <Setup />} */}
             </div>
           </div>
         </section>
         {/**pop up */}
         {settings.additionalSecurity.isPopUpOpened && (
-          <div className='w-full justify-center absolute top-[134px] h-full items-center flex'>
+          <div className="w-full justify-center absolute top-[134px] h-full items-center flex">
             {' '}
             {settings.selectedSecurityVerification !== '' ? (
               ConditionalRenering()
@@ -324,14 +327,14 @@ const Dashboard = () => {
           </div>
         )}
         {settings.isAlertEnabled && (
-          <div className='w-full justify-center absolute top-[134px] items-center flex'>
+          <div className="w-full justify-center absolute top-[134px] items-center flex">
             {settings.isAlertEnabled && (
               <Alert isEnabled={settings.isAlertEnabled} heading={text} text={info} onClick={setSettings} />
             )}
           </div>
         )}
         {authChanged && (
-          <div className='w-full justify-center absolute top-[134px] h-full items-center flex'>
+          <div className="w-full justify-center absolute top-[134px] h-full items-center flex">
             <Success authChanged={authChanged} />
           </div>
         )}
@@ -354,7 +357,7 @@ const Dashboard = () => {
             setShowServices(false);
           }}
         >
-          <DialogContent className='w-[782px] max-w-[782px] p-4 bg-[#F5F5F5]'>
+          <DialogContent className="w-[782px] max-w-[782px] p-4 bg-[#F5F5F5]">
             <ServiceSetup setShowSetup={setShowServices} selectedService={selectedService} />
           </DialogContent>
         </Dialog>
@@ -363,7 +366,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className='flex items-center justify-center min-h-screen text-center text-gray-700 px-4'>
+    <div className="flex items-center justify-center min-h-screen text-center text-gray-700 px-4">
       <p>
         This platform is not optimized for use on mobile phones and Tablets. Please switch to a laptop or desktop. Thank
         you!
