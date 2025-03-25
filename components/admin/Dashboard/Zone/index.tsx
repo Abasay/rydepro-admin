@@ -117,6 +117,7 @@ const Zone = () => {
       state: '',
       city: '',
       timeZone: '',
+      county: '',
     },
     onSubmit: (values) => {
       console.log(values);
