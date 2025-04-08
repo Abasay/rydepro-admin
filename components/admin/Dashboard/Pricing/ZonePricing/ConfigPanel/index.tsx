@@ -164,7 +164,6 @@ const FeeConfigPanel: React.FC = () => {
 
   const { feeSections, getFeeSections, setFeeSections } = useVariables();
 
-  // Handler for updating fee values
   const handleValueChange = (
     sectionId: string,
     feeId: string,
