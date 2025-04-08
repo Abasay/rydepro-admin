@@ -55,8 +55,8 @@ const FeeSection: React.FC<FeeSectionProps> = ({ section, onValueChange, onVaria
                     <FeeRow
                       key={`${fee.id}-${rowIndex}-${varIndex}`}
                       name={row.name}
-                      value1={row.values[varIndex]?.value1 || '0.0'}
-                      value2={row.values[varIndex]?.value2 || '0.0'}
+                      value1={row.values[varIndex]?.value1 || ''}
+                      value2={row.values[varIndex]?.value2 || ''}
                       onValue1Change={(value) => onValueChange(section.id, fee.id, rowIndex, varIndex, 'value1', value)}
                       onValue2Change={(value) => onValueChange(section.id, fee.id, rowIndex, varIndex, 'value2', value)}
                     />

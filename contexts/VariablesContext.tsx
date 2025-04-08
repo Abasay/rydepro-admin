@@ -14,7 +14,7 @@ interface VariablesContextType {
   setFormulaTokens: (formulaTokens: FormulaToken[]) => void;
   feeSections: SectionData[];
   getFeeSections: () => void;
-  setFeeSections: (feeSections: SectionData[]) => void;
+  setFeeSections: React.Dispatch<React.SetStateAction<SectionData[]>>;
 }
 
 // const mockVariables: Variable[] = [

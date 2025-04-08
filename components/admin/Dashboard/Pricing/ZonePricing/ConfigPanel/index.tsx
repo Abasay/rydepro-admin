@@ -244,7 +244,7 @@ const FeeConfigPanel: React.FC = () => {
             }),
           };
         }
-        return section;
+        return section as any;
       })
     );
   };
