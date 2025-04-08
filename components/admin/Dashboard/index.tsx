@@ -33,11 +33,24 @@ import SuccessModal from '../Success';
 import ErrorModal from '../ErrorModal';
 import { DELETE_REQUEST, GET_REQUEST, POST_REQUEST } from '@/utils/lib/server-requests';
 import Zone from './Zone';
+import ZoneTable from './Zone/Table';
+import { SideBarProps } from './Sidebar/SideBarComponent';
+
+import VariableSetup from './Pricing/Variables';
+import VariableCreate from './Pricing/Variables/Setup';
+import FormulaSetup from './Pricing/Formulas';
+import FormulaCreate from './Pricing/Formulas/Setup';
+import { VariablesProvider } from '@/contexts/VariablesContext';
+import FormulaPricing from './Pricing/ZonePricing/FormulaPricing';
+import ZonePricing from './Pricing/ZonePricing';
+import dynamic from 'next/dynamic';
+
+const OverpassMap = dynamic(() => import('./Zone/OverpassMapWithInput'), { ssr: false });
 
 const USERHEADERS = ['All Users', 'Individual', 'Organization'];
 export const DRIVERHEADERS = ['All Drivers', 'Livery Company', 'Chauffeur Drivers', 'TNC'];
 
-interface Service {
+export interface Service {
   _id: string;
   serviceName: string;
   code: string;
@@ -99,7 +112,7 @@ const Dashboard = () => {
 
   const { userLoginCredentials, setUserLoginCredentials } = useLogInContext();
 
-  const { isSettingsClicked, setSettings, settings, authChanged } = useDashboardContext();
+  const { isSettingsClicked, setSettings, settings, authChanged, zones, setZones } = useDashboardContext();
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLaptop, setIsLaptop] = useState<boolean>(false); // Initialize to false
@@ -113,6 +126,12 @@ const Dashboard = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+
+  const [showVariables, setShowVariables] = useState<boolean>(false);
+  const [selectedVariable, setSelectedVariable] = useState<any>(null);
+  const [showSetup, setShowSetup] = useState<boolean>(false);
+  const [showFormula, setShowFormula] = useState<boolean>(false);
+  const [selectedFormula, setSelectedFormula] = useState<any>(null);
 
   const getServices = async () => {
     const url = URLS.BASE_URL_ADMIN + URLS.getServices;
@@ -230,6 +249,111 @@ const Dashboard = () => {
     }
   };
 
+  const sideBarRendering = (activeHeader: string) => {
+    switch (activeHeader) {
+      case 'All Users':
+        return <Users />;
+      case 'Individual':
+        return <Users />;
+      case 'Organization':
+        return <Users />;
+      case 'All Drivers':
+        return <Drivers />;
+      case 'Livery Company':
+        return <Drivers />;
+      case 'Chauffeur Drivers':
+        return <Drivers />;
+      case 'TNC':
+        return <Drivers />;
+      case 'Booking Table - Admin':
+        return <BookingTable />;
+      case 'Vehicle':
+        return (
+          <VehicleTable
+            vehicles={vehicles}
+            setShowModal={setShowModal}
+            setSelectVehicle={setSelectedVehicle}
+            deleteVehicle={deleteVehicle}
+          />
+        );
+      case 'Services':
+        return (
+          <ServiceTable
+            services={services}
+            setShowSetup={setShowServices}
+            setSelectService={setSelectedService}
+            deleteService={deleteService}
+          />
+        );
+      case 'Zone':
+        return <Zone />;
+      case 'Zone List':
+        return <ZoneTable zones={[]} />;
+      default:
+        break;
+    }
+  };
+
+  const SidebarComponentRenderer = (activeHeader: string) => {
+    switch (activeHeader) {
+      case 'Zone Setup':
+        // return <Zone />;
+        return <OverpassMap />;
+      case 'Zone List':
+        return <ZoneTable zones={zones} />;
+      case 'Vehicle Setup':
+        return (
+          <VehicleTable
+            vehicles={vehicles}
+            setShowModal={setShowModal}
+            setSelectVehicle={setSelectedVehicle}
+            deleteVehicle={deleteVehicle}
+          />
+        );
+      case 'Services Setup':
+        return (
+          <ServiceTable
+            services={services}
+            setShowSetup={setShowServices}
+            setSelectService={setSelectedService}
+            deleteService={deleteService}
+          />
+        );
+      case 'Bookings List':
+        return <BookingTable />;
+      case 'All Users':
+        return <Users />;
+      case 'Individual':
+        return <Users />;
+      case 'Organization':
+        return <Users />;
+      case 'All Drivers':
+        return <Drivers />;
+      case 'Livery Company':
+        return <Drivers />;
+      case 'Chauffeur Drivers':
+        return <Drivers />;
+      case 'TNC':
+        return <Drivers />;
+
+      case 'Variable Setup':
+        return <VariableSetup setShowSetup={setShowVariables} />;
+
+      case 'Formula Setup':
+        return <FormulaSetup setShowSetup={setShowFormula} />;
+
+      case 'Zone Pricing':
+        return (
+          <VariablesProvider>
+            <ZonePricing />;
+          </VariablesProvider>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   useEffect(() => {
     // Check window width on client-side only
     const checkWidth = () => {
@@ -271,7 +395,7 @@ const Dashboard = () => {
             settings.additionalSecurity.isPopUpOpened || settings.isAlertEnabled || authChanged
               ? 'brightness-75'
               : 'brightness-100'
-          } bg-[#F7F7F7]  min-h-full flex relative  filter transition duration-500 `}
+          } bg-[#F7F7F7]  min-h-screen flex relative  filter transition duration-500 `}
         >
           {showModal && (
             <div className=" absolute border left-[5%] right-[5%] top-[20%] bottom-[10%] border-[#FFFFFF] rounded-3xl z-50 bg-[#FFFFFF] grid place-content-center min-w-[2902px] max-w-[2902px] mx-auto h-[1486px]">
@@ -281,17 +405,19 @@ const Dashboard = () => {
           {showModal && (
             <div className=" min-w-full max-3000:min-w-[3000px] max-3000:min-h-[1580px] min-h-full grid place-content-center  h-[100vh] bg-[#00000099] absolute z-40"></div>
           )}{' '}
-          <div className="w-full flex gap-0  border">
+          <div className="w-full flex gap-0 min-h-screen  border">
             <Sidebar />
-            <div className="w-full overflow-scroll scrollbar-hide flex flex-col min-h-[873px] max-h-[873px]">
+            <div className="w-full overflow-scroll scrollbar-hide flex flex-col h-full bg-[#FFFFFF]">
               {/* <Header /> */}
               <DBHeader />
               {/**Settings */}
               {isSettingsClicked && <Settings />}
 
-              {USERHEADERS.includes(activeHeader) && <Users />}
-              {DRIVERHEADERS.includes(activeHeader) && <Drivers />}
-              {activeHeader === 'Booking Table - Admin' && <BookingTable />}
+              {!isSettingsClicked && SidebarComponentRenderer(activeHeader)}
+
+              {/* {USERHEADERS.includes(activeHeader) && <Users />}
+              {DRIVERHEADERS.includes(activeHeader) && <Drivers />} */}
+              {/* {activeHeader === 'Booking Table - Admin' && <BookingTable />}
               {activeHeader === 'Vehicle' && (
                 <VehicleTable
                   vehicles={vehicles}
@@ -307,9 +433,10 @@ const Dashboard = () => {
                   setSelectService={setSelectedService}
                   deleteService={deleteService}
                 />
-              )}
-
+              )} */}
+              {/* 
               {activeHeader === 'Zone' && <Zone />}
+              {activeHeader === 'Zone List' && <ZoneTable zones={[]} />} */}
               {/* {activeHeader === 'Vehicle' && <Setup />} */}
             </div>
           </div>
@@ -361,6 +488,32 @@ const Dashboard = () => {
             <ServiceSetup setShowSetup={setShowServices} selectedService={selectedService} />
           </DialogContent>
         </Dialog>
+
+        <Dialog
+          open={showVariables}
+          onOpenChange={() => {
+            setSelectedVariable(null);
+            setShowVariables(false);
+          }}
+        >
+          <DialogContent className="w-[782px] max-w-[782px] p-4 bg-[#F5F5F5]">
+            <VariableCreate setShowSetup={setShowVariables} selectedVariable={selectedVariable} />
+          </DialogContent>
+        </Dialog>
+
+        <VariablesProvider>
+          <Dialog
+            open={showFormula}
+            onOpenChange={() => {
+              setSelectedFormula(null);
+              setShowFormula(false);
+            }}
+          >
+            <DialogContent className="w-[782px] max-w-[782px] p-4 bg-[#F5F5F5]">
+              <FormulaCreate setShowSetup={setShowFormula} selectedFormula={selectedFormula} />
+            </DialogContent>
+          </Dialog>
+        </VariablesProvider>
       </React.Fragment>
     );
   }

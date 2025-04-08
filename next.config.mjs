@@ -7,7 +7,7 @@ const nextConfig = {
     domains: ['localhost', 'objects.liquidweb.services'],
     unoptimized: true,
   },
-  output: 'export',
+  // output: 'export',
   basePath: process.env.BASE_PATH ? process.env.BASE_PATH : '',
   assetPrefix: process.env.URL ? process.env.URL : undefined,
 };

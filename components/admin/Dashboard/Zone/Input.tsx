@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface InputProps {
   labelText: string;
@@ -7,11 +7,17 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   important?: boolean;
   name: string;
+  type?: string;
+  disabled?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({ labelText, placeholder, value, onChange, important, name }) => {
+const Input: React.FC<InputProps> = ({ labelText, placeholder, value, onChange, important, name, type, disabled }) => {
+  const [disabledInput, setDisabled] = useState(true);
   return (
-    <div className=" flex flex-col gap-11 w-[181px] items-start border-b border-[#CCCCCC]">
+    <div
+      className=" flex flex-col gap-3 w-[181px] items-start border-b border-[#CCCCCC]"
+      onClick={() => setDisabled(false)}
+    >
       <label className="text-[#0E0E0E] font-bold text-sm">
         {labelText} {important && <span className="text-[#D21B34]">*</span>}
       </label>
@@ -21,6 +27,8 @@ const Input: React.FC<InputProps> = ({ labelText, placeholder, value, onChange, 
         value={value}
         name={name}
         onChange={onChange}
+        type={type}
+        disabled={disabled && disabledInput}
       />
     </div>
   );

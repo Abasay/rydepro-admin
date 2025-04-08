@@ -1,6 +1,7 @@
 import { AdditionalSecurityTypes, NavigationLogicTypes, SignUpTypes } from '@/types/SignUpTypes/SignUp';
 import { NavProps, UserLoginCredentials } from './LogInTypes';
 import { ResetNavProps } from './ResetTypes';
+import { Service, Vehicle } from '@/components/admin/Dashboard';
 
 export interface GlobalState {
   userDetails: SignUpTypes;
@@ -63,8 +64,45 @@ export interface GeneralDashboardContext {
   adminDetails: AdminDetails | null;
   setAdminDetails: ({}: AdminDetails | null) => void;
   getAdmin: () => void;
+  services: Service[];
+  setServices: (services: Service[]) => void;
+  vehicles: Vehicle[];
+  setVehicles: (vehicles: Vehicle[]) => void;
+  variables: Variable[];
+  setVariables: (variables: Variable[]) => void;
+  zones: Zone[];
+  setZones: (zones: Zone[]) => void;
+  activeVariable: string;
+  setActiveVariable: (variable: string) => void;
+  formulas: Formula[];
+  setFormulas: (formulas: Formula[]) => void;
+  getFormulas: () => void;
+  getServices: () => void;
+  getVehicles: () => void;
+  getZones: () => void;
+  getVariables: () => void;
+  activeFormula: string;
+  setActiveFormula: (formula: string) => void;
 }
 
+export interface Formula {
+  _id: string;
+  formulaName: string;
+  description: string;
+  mainFormula: {
+    type: 'variable' | 'operator';
+    value: string;
+  }[];
+  __v: number;
+  status: boolean;
+}
+
+export interface Variable {
+  id: string;
+  category: string;
+  variableName: string;
+  fee: { id: string; feeType: string; description: string; status: boolean }[];
+}
 export interface AdminDetails {
   id: string;
   email: string;
@@ -85,4 +123,22 @@ export interface AdminDetails {
   webAuthN: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Zone {
+  _id: string;
+  zoneName: string;
+  country: string;
+  county: string;
+  city: string;
+  state: string;
+  zoneType: string;
+  timeZone: string;
+  status: boolean;
+  createdAt: string;
+  updatedAt: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
 }

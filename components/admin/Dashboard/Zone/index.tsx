@@ -46,7 +46,7 @@ const fetchOverpassData = async (location: string, polygonFor: string) => {
   }
 };
 
-fetchOverpassData('', '');
+// fetchOverpassData('', '');
 
 const processRelations = (elements: any[], polygonFor: string) => {
   const polygons = [];
@@ -207,6 +207,7 @@ const Zone = () => {
       (suggestion) => suggestion.center[0] === longitude && suggestion.center[1] === latitude
     );
 
+    console.log(selected);
     const locations = selected?.place_name.split(',');
     if (!locations) return;
     await fetchOverpassData(locations[1].trim(), locations[0].trim()).then(async (data) => {
@@ -371,8 +372,8 @@ const Zone = () => {
       <div style={{ width: '100vw', height: '100vh' }}>
         <Map
           {...viewport}
-          width="100%"
-          height="100%"
+          // width="100%"
+          // height="100%"
           mapStyle="mapbox://styles/mapbox/streets-v11"
           onMove={(evt: { viewState: any }) => setViewport(evt.viewState)}
           mapboxAccessToken={MAPBOX_TOKEN}

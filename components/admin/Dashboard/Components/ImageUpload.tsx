@@ -66,7 +66,7 @@ export default function ImageUpload({
           .then((result: any) => {
             console.log(result);
             if (result.success) {
-              setImage(result.data.imageUrl);
+              setImage(imageData);
               setValue(result.data.imageFilePath);
               if (fileInputRef.current) fileInputRef.current.value = '';
 

@@ -68,4 +68,14 @@ export const URLS = {
   getVehicles: '/admin/vehicles/admin-vehicles',
   uploadImg: '/admin/vehicles/upload-image',
   getVehicle: '/admin/vehicles/get-vehicle',
+
+  //ZONES AND PRICEINGS
+  getZones: '/admin/zones/zone-list',
+  createZone: '/admin/zones/add-zone',
+  createVariables: '/api/pricing/set-variables',
+  getVariables: '/api/pricing/get-variables',
+  createFormula: '/api/pricing/set-formula',
+  formulas: '/api/pricing/get-formulas',
+  getFeeSections: '/api/pricing/get-categories',
+  setPricing: '/api/pricing/set-zone-pricing',
 };

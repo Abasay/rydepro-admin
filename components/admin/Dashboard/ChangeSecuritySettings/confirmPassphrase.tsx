@@ -62,7 +62,7 @@ const ConfirmChangePassphrase = () => {
     }
 
     const newPassphrase = passPhrases.map((pass, idx) => {
-      return { [`pass_${idx + 1}`]: pass };
+      return { [`pass_${idx + 1}`]: pass.trim() };
     });
 
     toast.loading('Changing your passphrase...');
@@ -103,70 +103,70 @@ const ConfirmChangePassphrase = () => {
     <>
       {/**content */}
       <div className={`w-full px-8 ${navigation.privateKeys ? styles['fade-in'] : styles['fade-out']}`}>
-        <div className='flex justify-center w-full mt-4'>
+        <div className="flex justify-center w-full mt-4">
           {
-            <div className='mt-10 flex flex-col justify-center min-w-[640px] items-center gap-6'>
-              <div className='min-h-[300px] grid grid-cols-2 grid-rows-3 gap-[24px]'>
-                <label htmlFor='passphrase1' className='flex flex-col gap-[8px]'>
-                  <span className='text-[14px] leading-[20px] text-[#0E0E0E] font-medium'>Passphrase 1</span>
+            <div className="mt-10 flex flex-col justify-center min-w-[640px] items-center gap-6">
+              <div className="min-h-[300px] grid grid-cols-2 grid-rows-3 gap-[24px]">
+                <label htmlFor="passphrase1" className="flex flex-col gap-[8px]">
+                  <span className="text-[14px] leading-[20px] text-[#0E0E0E] font-medium">Passphrase 1</span>
                   <input
-                    type='text'
-                    id='passphrase1'
-                    name='passphrase1'
+                    type="text"
+                    id="passphrase1"
+                    name="passphrase1"
                     value={passphrases.passphrase1}
                     onChange={handleChange}
-                    className='h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none'
+                    className="h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none"
                   />
                 </label>
-                <label htmlFor='passphrase2' className='flex flex-col gap-[8px]'>
-                  <span className='text-[14px] leading-[20px] text-[#0E0E0E] font-medium'>Passphrase 2</span>
+                <label htmlFor="passphrase2" className="flex flex-col gap-[8px]">
+                  <span className="text-[14px] leading-[20px] text-[#0E0E0E] font-medium">Passphrase 2</span>
                   <input
-                    type='text'
-                    id='passphrase2'
-                    name='passphrase2'
+                    type="text"
+                    id="passphrase2"
+                    name="passphrase2"
                     value={passphrases.passphrase2}
                     onChange={handleChange}
-                    className='h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none'
+                    className="h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none"
                   />
                 </label>
-                <label htmlFor='passphrase3' className='flex flex-col gap-[8px]'>
-                  <span className='text-[14px] leading-[20px] text-[#0E0E0E] font-medium'>Passphrase 3</span>
+                <label htmlFor="passphrase3" className="flex flex-col gap-[8px]">
+                  <span className="text-[14px] leading-[20px] text-[#0E0E0E] font-medium">Passphrase 3</span>
                   <input
-                    id='passphrase3'
-                    name='passphrase3'
+                    id="passphrase3"
+                    name="passphrase3"
                     value={passphrases.passphrase3}
                     onChange={handleChange}
-                    type='text'
-                    className='h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none'
+                    type="text"
+                    className="h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none"
                   />
                 </label>
-                <label htmlFor='passphrase4' className='flex flex-col gap-[8px]'>
-                  <span className='text-[14px] leading-[20px] text-[#0E0E0E] font-medium'>Passphrase 4</span>
+                <label htmlFor="passphrase4" className="flex flex-col gap-[8px]">
+                  <span className="text-[14px] leading-[20px] text-[#0E0E0E] font-medium">Passphrase 4</span>
                   <input
-                    id='passphrase4'
-                    name='passphrase4'
+                    id="passphrase4"
+                    name="passphrase4"
                     value={passphrases.passphrase4}
                     onChange={handleChange}
-                    type='text'
-                    className='h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none'
+                    type="text"
+                    className="h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none"
                   />
                 </label>
-                <label htmlFor='passphrase5' className='flex flex-col gap-[8px]'>
-                  <span className='text-[14px] leading-[20px] text-[#0E0E0E] font-medium'>Passphrase 5</span>
+                <label htmlFor="passphrase5" className="flex flex-col gap-[8px]">
+                  <span className="text-[14px] leading-[20px] text-[#0E0E0E] font-medium">Passphrase 5</span>
                   <input
-                    id='passphrase5'
+                    id="passphrase5"
                     value={passphrases.passphrase5}
-                    name='passphrase5'
+                    name="passphrase5"
                     onChange={handleChange}
-                    type='text'
-                    className='h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none'
+                    type="text"
+                    className="h-[56px] rounded-[8px] border-y-[1px] p-[16px] border-[#DADADA] text-[16px] leading-[24px] text-[#0E0E0E] font-normal outline-none"
                   />
                 </label>
               </div>
 
               <button
                 onClick={handleChangePassphrase}
-                type='submit'
+                type="submit"
                 // disabled={isButtonDisabled}
 
                 className={`h-[56px] w-[480px] mt-10 p-[8px] rounded-[8px] gap-[16px] text-base leading-[24px] disabled:bg-[#8A8A8A] disabled:text-[#DADADA] text-[#FAF6F6] bg-[#0E0E0E]`}

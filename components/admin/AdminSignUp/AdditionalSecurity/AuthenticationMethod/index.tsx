@@ -13,10 +13,10 @@ const AdditionalSecurity = () => {
   const { navigation, setNavigation, setAdditionalSecurity, additionalSecurity } = useSignInContext();
   return (
     <>
-      <div className='flex flex-col items-center'>
+      <div className="flex flex-col items-center">
         {/**heading */}
-        <div className='flex w-full justify-between items-center'>
-          <Image src={RydeProLogo} alt='' width={70} height={100} />
+        <div className="flex w-full justify-between items-center">
+          <Image src={RydeProLogo} alt="" width={70} height={100} />
           <button
             onClick={(e: React.FormEvent) => {
               e.preventDefault();
@@ -32,15 +32,15 @@ const AdditionalSecurity = () => {
                 isMethodActive: false,
               });
             }}
-            type='button'
-            title='Sign In'
-            className='w-[120px] flex gap-3 h-[48px] justify-center rounded-[8px] bg-[#F5F5F5] border-[#D0D0D0] border-[0.5px] p-[8px] items-center text-[#0E0E0E]'
+            type="button"
+            title="Sign In"
+            className="w-[120px] flex gap-3 h-[48px] justify-center rounded-[8px] bg-[#F5F5F5] border-[#D0D0D0] border-[0.5px] p-[8px] items-center text-[#0E0E0E]"
           >
             <span>
-              <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
-                  d='M10.3544 13.8537C10.1594 14.0493 9.84285 14.0499 9.64724 13.855L4.16276 8.39C3.94705 8.17505 3.94705 7.82574 4.16276 7.6108L9.64725 2.14582C9.84285 1.9509 10.1594 1.95147 10.3544 2.14708C10.5493 2.34269 10.5487 2.65927 10.3531 2.85418L5.18851 8.0004L10.3531 13.1466C10.5487 13.3415 10.5493 13.6581 10.3544 13.8537Z'
-                  fill='#0E0E0E'
+                  d="M10.3544 13.8537C10.1594 14.0493 9.84285 14.0499 9.64724 13.855L4.16276 8.39C3.94705 8.17505 3.94705 7.82574 4.16276 7.6108L9.64725 2.14582C9.84285 1.9509 10.1594 1.95147 10.3544 2.14708C10.5493 2.34269 10.5487 2.65927 10.3531 2.85418L5.18851 8.0004L10.3531 13.1466C10.5487 13.3415 10.5493 13.6581 10.3544 13.8537Z"
+                  fill="#0E0E0E"
                 />
               </svg>
             </span>
@@ -49,30 +49,30 @@ const AdditionalSecurity = () => {
         </div>
         {/**content */}
         <div className={`w-full justify-center items-center mx-auto mt-20 px-10 ${styles['slide-from-top']}`}>
-          <div className='flex flex-col gap-2'>
-            <div className='flex flex-col gap-1'>
-              <span className='text-base leading-[24px] font-medium text-[#0E0E0E]'>Additional Security</span>
-              <h2 className='text-[24px] leading-[32px] font-medium text-[#0E0E0E]'>Protect your Account!</h2>
-              <span className='text-[#3C3C3C] text-base leading-[24px] font-normal'>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-base leading-[24px] font-medium text-[#0E0E0E]">Additional Security</span>
+              <h2 className="text-[24px] leading-[32px] font-medium text-[#0E0E0E]">Protect your Account!</h2>
+              <span className="text-[#3C3C3C] text-base leading-[24px] font-normal">
                 Please enable the following authentication methods to secure your account.
               </span>
             </div>
-            <div className='flex flex-col mt-4 gap-4'>
+            <div className="flex flex-col mt-4 gap-4">
               <RecComponent
                 img={img}
-                className='bg-[#F7F7F7]'
+                className="bg-[#F7F7F7]"
                 isClicked={additionalSecurity.isBiometricSelected}
                 onClick={() => {
-                  setAdditionalSecurity({
-                    ...additionalSecurity,
-                    isBiometricSelected: !additionalSecurity.isBiometricSelected,
-                  });
+                  // setAdditionalSecurity({
+                  //   ...additionalSecurity,
+                  //   isBiometricSelected: !additionalSecurity.isBiometricSelected,
+                  // });
                 }}
-                text='Biometric'
+                text="Biometric"
               />
               <RecComponent
                 img={phoneImg}
-                className='bg-[#F7F7F7]'
+                className="bg-[#F7F7F7]"
                 isClicked={additionalSecurity.isPincodeOrPassphraseSelected}
                 onClick={() => {
                   setAdditionalSecurity({
@@ -80,12 +80,12 @@ const AdditionalSecurity = () => {
                     isPincodeOrPassphraseSelected: !additionalSecurity.isPincodeOrPassphraseSelected,
                   });
                 }}
-                text='Pincode/Passphrase'
+                text="Pincode/Passphrase"
               />
             </div>
             {/** */}
             <button
-              type='submit'
+              type="submit"
               onClick={(e: React.FormEvent) => {
                 e.preventDefault();
                 const { isBiometricSelected, isPincodeOrPassphraseSelected } = additionalSecurity;

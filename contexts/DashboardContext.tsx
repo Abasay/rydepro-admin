@@ -1,7 +1,10 @@
 // contexts/GlobalContext.tsx
 'use client';
 
-import { AdminDetails, GeneralDashboardContext } from '@/types/GlobalState';
+import { Service, Vehicle } from '@/components/admin/Dashboard';
+import { AdminDetails, GeneralDashboardContext, Variable, Zone } from '@/types/GlobalState';
+import { GET_REQUEST } from '@/utils/lib/server-requests';
+import { URLS } from '@/utils/lib/urls';
 import { getRequest } from '@/utils/requests';
 import { AdminUrls } from '@/utils/urls';
 import Cookies from 'js-cookie';
@@ -22,6 +25,14 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const [subText, setSubText] = useState<string>('This is a blank text for now');
   const [authChanged, setAuthChanged] = useState<string>('');
   const [passPhrases, setPassphrases] = useState<string[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [variables, setVariables] = useState<Variable[]>([]);
+  const [zones, setZones] = useState<Zone[]>([]);
+  const [activeVariable, setActiveVariable] = useState<string>('Variable 1');
+  const [activeFormula, setActiveFormula] = useState<string>('');
+
+  const [formulas, setFormulas] = useState<any[]>([]);
 
   const router = useRouter();
 
@@ -76,6 +87,87 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     isSignOutEnabled: false,
   });
 
+  const getServices = async () => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.getServices;
+    await GET_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.success) {
+          setServices(result.data.services);
+        } else {
+          setServices([]);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getVariables = async () => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.getVariables;
+    await GET_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.status === 200) {
+          setVariables(result.variables);
+        } else {
+          setVariables([]);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getFormulas = async () => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.formulas;
+    await GET_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.status === 200) {
+          setFormulas(result.formulas);
+          setActiveFormula(result.formulas[0].formulaName);
+        } else {
+          setFormulas([]);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getVehicles = async () => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.getVehicles;
+    await GET_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.success) {
+          setVehicles(result.data.vehicles);
+        } else {
+          setVehicles([]);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getZones = async () => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.getZones;
+    await GET_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.success) {
+          setZones(result.zones);
+        } else {
+          setZones([]);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const getAdmin = async () => {
     const url = AdminUrls.getAdmin;
     const token = Cookies.get('token') || '';
@@ -106,6 +198,11 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     getAdmin();
+    getVehicles();
+    getZones();
+    getServices();
+    getVariables();
+    getFormulas();
   }, []);
 
   return (
@@ -128,6 +225,25 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         adminDetails,
         setAdminDetails,
         getAdmin,
+        services,
+        setServices,
+        vehicles,
+        setVehicles,
+        variables,
+        setVariables,
+        zones,
+        setZones,
+        activeVariable,
+        setActiveVariable,
+        formulas,
+        setFormulas,
+        getFormulas,
+        getServices,
+        getVehicles,
+        getZones,
+        getVariables,
+        activeFormula,
+        setActiveFormula,
       }}
     >
       {children}

@@ -332,7 +332,9 @@ const UserTable = ({ allUsers }: { allUsers: any[] }) => {
                     {user['Email Address']}
                   </td>
                   <td className="py-2 items-start text-[#0E0E0E] font-medium min-w-[138px] max-w-[138px]">
-                    {user['Phone Number']}
+                    {user['Phone Number']?.callingCode
+                      ? `+${user['Phone Number'].callingCode} ${user['Phone Number'].number}`
+                      : ''}
                   </td>
                   <td className="py-2 min-w-[124px] text-[#0E0E0E] font-medium max-w-[124px]">{user['Country']}</td>
                   <td className="py-2 min-w-[124px]  text-[#0E0E0E] font-medium max-w-[124px]">{user['State']}</td>

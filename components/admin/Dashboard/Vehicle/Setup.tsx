@@ -54,7 +54,7 @@ const Setup = ({
       },
       colorCode: '',
     },
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setSubmitting }) => {
       console.log(values);
       // if (
       //   Object.values(values.waitTimeInformation).some((value) => value === '') ||
@@ -74,6 +74,8 @@ const Setup = ({
       }
 
       const REQUEST = selectedVehicle ? PUT_REQUEST : POST_REQUEST;
+
+      setSubmitting(true);
 
       await REQUEST(
         url,
@@ -109,6 +111,9 @@ const Setup = ({
           setTimeout(() => {
             setErrorText('');
           }, 3000);
+        })
+        .finally(() => {
+          setSubmitting(false);
         });
     },
   });
@@ -390,6 +395,7 @@ const Setup = ({
             text="Save Configuration"
             className=" bg-[#0E0E0E] text-[#FAF6F6] text-base font-medium"
             onClick={formik.handleSubmit}
+            disabled={formik.isSubmitting || Object.values(formik.values).some((value) => value === '')}
           />
           <Button
             text="Reset Form "

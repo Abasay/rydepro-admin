@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GeneralDesign from '@/components/admin/GeneralDesign/index';
 import Image from 'next/image';
 import RydeProLogo from '@/public/RydeproLogo.png';
@@ -45,6 +45,7 @@ const OTPVerification = () => {
   };
 
   const [verifying, setVerifying] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const handleSubmit = async () => {
     const otp = inputsRef.current.map((input) => input?.value).join('');
@@ -54,7 +55,7 @@ const OTPVerification = () => {
     }
 
     try {
-      setVerifying(false);
+      setVerifying(true);
 
       const response = await postRequest({
         url: AdminUrls.verifyOtp,
@@ -118,22 +119,32 @@ const OTPVerification = () => {
       console.error('Signup Error:', error);
     }
   };
+
+  useEffect(() => {
+    // Check if all inputs are filled
+    const allInputsFilled = inputsRef.current.every((input) => input?.value);
+    if (allInputsFilled) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [inputsRef.current]);
   return (
     <>
       {/**header */}
       <div className={`flex w-full justify-between items-center `}>
-        <Image src={RydeProLogo} alt='' width={70} height={100} />
+        <Image src={RydeProLogo} alt="" width={70} height={100} />
         <button
           onClick={handleBack}
-          type='button'
-          title='Sign In'
-          className='w-[120px] flex gap-3 h-[48px] justify-center rounded-[8px] bg-[#F5F5F5] border-[#D0D0D0] border-[0.5px] p-[8px] items-center text-[#0E0E0E]'
+          type="button"
+          title="Sign In"
+          className="w-[120px] flex gap-3 h-[48px] justify-center rounded-[8px] bg-[#F5F5F5] border-[#D0D0D0] border-[0.5px] p-[8px] items-center text-[#0E0E0E]"
         >
           <span>
-            <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
-                d='M10.3544 13.8537C10.1594 14.0493 9.84285 14.0499 9.64724 13.855L4.16276 8.39C3.94705 8.17505 3.94705 7.82574 4.16276 7.6108L9.64725 2.14582C9.84285 1.9509 10.1594 1.95147 10.3544 2.14708C10.5493 2.34269 10.5487 2.65927 10.3531 2.85418L5.18851 8.0004L10.3531 13.1466C10.5487 13.3415 10.5493 13.6581 10.3544 13.8537Z'
-                fill='#0E0E0E'
+                d="M10.3544 13.8537C10.1594 14.0493 9.84285 14.0499 9.64724 13.855L4.16276 8.39C3.94705 8.17505 3.94705 7.82574 4.16276 7.6108L9.64725 2.14582C9.84285 1.9509 10.1594 1.95147 10.3544 2.14708C10.5493 2.34269 10.5487 2.65927 10.3531 2.85418L5.18851 8.0004L10.3531 13.1466C10.5487 13.3415 10.5493 13.6581 10.3544 13.8537Z"
+                fill="#0E0E0E"
               />
             </svg>
           </span>
@@ -144,37 +155,39 @@ const OTPVerification = () => {
       <div
         className={`mt-20 w-full px-8 flex justify-center items-center ${navigation.issignupotp && styles['slide-in']}`}
       >
-        <div className='flex flex-col gap-6 container max-w-[480px]'>
-          <div className='flex flex-col gap-1'>
-            <span className='text-base leading-[24px] font-medium text-[#0E0E0E]'>Create an Account</span>
-            <h2 className='text-[24px] leading-[32px] font-medium text-[#0E0E0E]'>Verify your Identity</h2>
-            <span className='text-base leading-[24px] text-[#3C3C3C]'>
+        <div className="flex flex-col gap-6 container max-w-[480px]">
+          <div className="flex flex-col gap-1">
+            <span className="text-base leading-[24px] font-medium text-[#0E0E0E]">Create an Account</span>
+            <h2 className="text-[24px] leading-[32px] font-medium text-[#0E0E0E]">Verify your Identity</h2>
+            <span className="text-base leading-[24px] text-[#3C3C3C]">
               Enter the 6 digit code sent to your email address
             </span>
           </div>
           {/**code */}
-          <div className='flex flex-col gap-6 mt-4 w-full'>
-            <span className='text-[14px] leading-[20px] font-medium text-[#0E0E0E]'>Code</span>
-            <div className='flex justify-between relative gap-2 md:gap-3'>
+          <div className="flex flex-col gap-6 mt-4 w-full">
+            <span className="text-[14px] leading-[20px] font-medium text-[#0E0E0E]">Code</span>
+            <div className="flex justify-between relative gap-2 md:gap-3">
               {Array(6)
                 .fill('')
                 .map((_, idx) => (
                   <input
                     key={idx}
                     ref={(el: any) => (inputsRef.current[idx] = el)}
-                    className='focus-within:outline-none h-[56px] w-[56px] text-zinc-700 placeholder-inputcolor rounded-[4px] text-[20px] border-b-[1px] border-[#8A8A8A] gap-[8px] text-center font-[500]'
+                    className={`focus-within:outline-none h-[56px] w-[56px] text-zinc-700 placeholder-inputcolor rounded-[4px] text-[20px] border-b-[1px] border-[#8A8A8A] gap-[8px] text-center font-[500] ${
+                      _ ? 'bg-[#8A8A8A]' : 'bg-transparent'
+                    }`}
                     maxLength={1}
-                    type='text'
-                    inputMode='numeric'
-                    pattern='[0-9]*'
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     onChange={(e) => handleChange(e, idx)}
                     onKeyDown={(e) => handleKeyDown(e, idx)}
                   />
                 ))}
             </div>
-            <span className='text-[16px] leading-[24px] font-normal text-[#3C3C3C]'>
+            <span className="text-[16px] leading-[24px] font-normal text-[#3C3C3C]">
               Didn&apos;t get OTP?{' '}
-              <span className='text-[#0E0E0E] font-medium cursor-pointer' onClick={handleResend}>
+              <span className="text-[#0E0E0E] font-medium cursor-pointer" onClick={handleResend}>
                 Resend
               </span>
               .
@@ -185,10 +198,11 @@ const OTPVerification = () => {
               e.preventDefault();
               handleSubmit();
             }}
-            type='submit'
-            className='h-[56px] p-[8px] rounded-[8px] gap-[16px] bg-[#0E0E0E] text-base leading-[24px] text-[#FAF6F6]'
+            type="submit"
+            disabled={verifying}
+            className="h-[56px] p-[8px] rounded-[8px] gap-[16px] bg-[#0E0E0E] text-base leading-[24px] text-[#FAF6F6] disabled:bg-[#DADADA]"
           >
-            Verify OTP
+            {verifying ? 'Verifying...' : 'Verify OTP'}
           </button>
         </div>
       </div>

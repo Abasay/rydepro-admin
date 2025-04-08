@@ -26,7 +26,7 @@ const ServiceSetup = ({
       serviceType: '',
       active: false,
     },
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setSubmitting }) => {
       const payload = {};
       let url = URLS.BASE_URL_ADMIN + URLS.createService;
 
@@ -38,6 +38,7 @@ const ServiceSetup = ({
 
       const { active, serviceDescription, ...rest } = values;
       let msg;
+      setSubmitting(true);
 
       await REQUEST(
         url,
@@ -66,6 +67,9 @@ const ServiceSetup = ({
           setTimeout(() => {
             setErrorText('');
           }, 3000);
+        })
+        .finally(() => {
+          setSubmitting(false);
         });
     },
   });
@@ -83,67 +87,76 @@ const ServiceSetup = ({
     }
   }, [selectedService]);
   return (
-    <section className=' flex flex-col gap-[26px] items-start p-5 py-10'>
-      <h1 className=' text-xl font-medium text-[#0E0E0E] ml-10'>Add Service </h1>
-      <form className=' flex flex-col gap-[26px] max-w-[650px] mx-auto ' onSubmit={formik.handleSubmit}>
+    <section className=" flex flex-col gap-[26px] items-start p-5 py-10">
+      <h1 className=" text-xl font-medium text-[#0E0E0E] ml-10">Add Service </h1>
+      <form className=" flex flex-col gap-[26px] max-w-[650px] mx-auto " onSubmit={formik.handleSubmit}>
         <Input
-          htmlFor='serviceName'
-          labelText='Service Name'
-          placeholder='Enter service name'
-          type='text'
+          htmlFor="serviceName"
+          labelText="Service Name"
+          placeholder="Enter service name"
+          type="text"
           value={formik.values.serviceName}
           onChange={formik.handleChange}
           important
         />
 
         <Input
-          htmlFor='serviceCode'
-          labelText='Service Code'
-          placeholder='Enter service code'
-          type='text'
+          htmlFor="serviceCode"
+          labelText="Service Code"
+          placeholder="Enter service code"
+          type="text"
           value={formik.values.serviceCode}
           onChange={formik.handleChange}
           important
         />
         <Textarea
-          htmlFor='serviceDescription'
-          labelText='Service Description'
-          placeholder='Enter service description'
+          htmlFor="serviceDescription"
+          labelText="Service Description"
+          placeholder="Enter service description"
           value={formik.values.serviceDescription}
           onChange={formik.handleChange}
-          type='text'
+          type="text"
           important
         />
         <Input
-          htmlFor='serviceType'
-          labelText='Service Type'
-          placeholder='Enter service type'
-          type='text'
+          htmlFor="serviceType"
+          labelText="Service Type"
+          placeholder="Enter service type"
+          type="text"
           value={formik.values.serviceType}
           onChange={formik.handleChange}
           important
         />
 
         <Toggle
-          toggleText='Active'
+          toggleText="Active"
           active={formik.values.active}
           setActive={(value) => formik.setFieldValue('active', value)}
         />
 
-        <div className=' flex items-center gap-20  justify-center w-[620px] mx-auto '>
+        <div className=" flex items-center gap-20  justify-center w-[620px] mx-auto ">
           <Button
-            text='Save Configuration'
-            className=' bg-[#0E0E0E] text-[#FAF6F6] text-base font-medium'
+            text={
+              selectedService
+                ? formik.isSubmitting
+                  ? 'Updating Service'
+                  : 'Update Service'
+                : formik.isSubmitting
+                ? 'Adding Service'
+                : 'Add Service'
+            }
+            className=" bg-[#0E0E0E] text-[#FAF6F6] text-base font-medium"
             onClick={formik.handleSubmit}
+            disabled={formik.isSubmitting || Object.values(formik.values).some((value) => value === '')}
           />
           <Button
-            text='Reset Form '
-            className=' bg-[#DADADA] text-[#000000] text-base font-medium'
+            text="Reset Form "
+            className=" bg-[#DADADA] text-[#000000] text-base font-medium"
             onClick={formik.resetForm}
           />
           <Button
-            text='Delete Entry'
-            className=' bg-[#B3261E] text-[#FAF6F6] text-base font-medium'
+            text="Delete Entry"
+            className=" bg-[#B3261E] text-[#FAF6F6] text-base font-medium"
             onClick={formik.resetForm}
           />
         </div>
