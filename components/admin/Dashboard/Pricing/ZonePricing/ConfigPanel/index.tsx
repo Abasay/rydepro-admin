@@ -4,7 +4,6 @@ import FeeSection from './FeeSection';
 import { useVariables } from '@/contexts/VariablesContext';
 
 const FeeConfigPanel: React.FC = () => {
-  // Initial fee data structure
   // const [feeSections, setFeeSections] = React.useState<SectionData[]>([
   //   {
   //     id: 'rydepro',
