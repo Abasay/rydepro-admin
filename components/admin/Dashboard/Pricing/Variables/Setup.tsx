@@ -6,9 +6,10 @@ import { useFormik } from 'formik';
 import Textarea from '../../Components/TextArea';
 import { useDashboardContext } from '@/contexts/DashboardContext';
 import { URLS } from '@/utils/lib/urls';
-import { POST_REQUEST } from '@/utils/lib/server-requests';
+import { POST_REQUEST, PUT_REQUEST } from '@/utils/lib/server-requests';
 import Cookies from 'js-cookie';
 import { useDB } from '@/contexts/DBContext';
+import { useVariables } from '@/contexts/VariablesContext';
 
 const VariableCreate = ({
   setShowSetup,
@@ -19,24 +20,36 @@ const VariableCreate = ({
 }) => {
   const { activeVariable, getVariables } = useDashboardContext();
   const { setSuccessText, setErrorText } = useDB();
+  const { variableOnEdit, setVariableOnEdit } = useVariables();
   const formik = useFormik({
     initialValues: {
-      category: '',
-      feeType: '',
-      description: '',
-      active: false,
+      category: variableOnEdit.category || '',
+      feeType: variableOnEdit.feeType || '',
+      description: variableOnEdit.description || '',
+      active: variableOnEdit.active || false,
     },
     onSubmit: async (values) => {
       const payload = {
         category: values.category,
         variableName: activeVariable,
-        feeType: values.feeType,
-        description: values.description,
-        active: values.active,
+        fee: [
+          {
+            feeType: values.feeType,
+            description: values.description,
+            active: values.active,
+            isActive: values.active,
+          },
+        ],
       };
-      const url = URLS.BASE_URL_ADMIN + URLS.createVariables;
 
-      await POST_REQUEST(url, payload, Cookies.get('token') || '')
+      console.log(variableOnEdit);
+      const url = variableOnEdit._id
+        ? URLS.BASE_URL_ADMIN + URLS.updateVariables + variableOnEdit._id
+        : URLS.BASE_URL_ADMIN + URLS.createVariables;
+
+      const REQUEST = variableOnEdit._id ? PUT_REQUEST : POST_REQUEST;
+
+      await REQUEST(url, payload, Cookies.get('token') || '')
         .then((result) => {
           if (result.success) {
             setSuccessText(result.message);
@@ -45,6 +58,13 @@ const VariableCreate = ({
             }, 3000);
             setShowSetup(false);
             getVariables();
+            setVariableOnEdit({
+              category: '',
+              feeType: '',
+              description: '',
+              active: false,
+              _id: '',
+            });
           } else {
             setErrorText(result?.message || result?.msg);
             setTimeout(() => {
@@ -57,6 +77,15 @@ const VariableCreate = ({
           setTimeout(() => {
             setErrorText('');
           }, 3000);
+        })
+        .finally(() => {
+          setVariableOnEdit({
+            category: '',
+            feeType: '',
+            description: '',
+            active: false,
+            _id: '',
+          });
         });
     },
   });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Wrapper from './Wrapper';
 import { useFormik } from 'formik';
 import Input from '@/components/admin/Dashboard/Zone/Input';
@@ -14,32 +14,10 @@ import { URLS } from '@/utils/lib/urls';
 import Cookies from 'js-cookie';
 import { useDB } from '@/contexts/DBContext';
 
-const HOURS = [
-  '12:00 AM',
-  '1:00 AM',
-  '2:00 AM',
-  '3:00 AM',
-  '4:00 AM',
-  '5:00 AM',
-  '6:00 AM',
-  '7:00 AM',
-  '8:00 AM',
-  '9:00 AM',
-  '10:00 AM',
-  '11:00 AM',
-  '12:00 PM',
-  '1:00 PM',
-  '2:00 PM',
-  '3:00 PM',
-  '4:00 PM',
-  '5:00 PM',
-  '6:00 PM',
-  '7:00 PM',
-  '8:00 PM',
-  '9:00 PM',
-  '10:00 PM',
-  '11:00 PM',
-];
+const HOURS = Array.from({ length: 24 }, (_, i) => {
+  const hour = i.toString().padStart(2, '0');
+  return `${hour}:00`;
+});
 
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const ExtraConfig = () => {
@@ -49,7 +27,8 @@ const ExtraConfig = () => {
   const [openVehicle, setOpenVehicle] = useState(false);
   const [openService, setOpenService] = useState(false);
 
-  const { vehicles, zones, services, activeFormula } = useDashboardContext();
+  const { vehicles, zones, services, activeFormula, getServices, getVariables, getVehicles, getZones, activeVariable } =
+    useDashboardContext();
   const { setSuccessText, setErrorText } = useDB();
   const { feeSections } = useVariables();
 
@@ -99,6 +78,7 @@ const ExtraConfig = () => {
         ...values,
         pricingFee: feeSections,
         formulaName: activeFormula,
+        activeVariable: activeVariable,
       };
 
       const url = URLS.BASE_URL_ADMIN + URLS.setPricing;
@@ -126,6 +106,12 @@ const ExtraConfig = () => {
       console.log(values);
     },
   });
+
+  useEffect(() => {
+    getVehicles();
+    getServices();
+    getZones();
+  }, []);
   return (
     <>
       <div className=" flex flex-col gap-5">

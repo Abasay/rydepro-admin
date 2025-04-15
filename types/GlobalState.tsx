@@ -2,6 +2,7 @@ import { AdditionalSecurityTypes, NavigationLogicTypes, SignUpTypes } from '@/ty
 import { NavProps, UserLoginCredentials } from './LogInTypes';
 import { ResetNavProps } from './ResetTypes';
 import { Service, Vehicle } from '@/components/admin/Dashboard';
+import React from 'react';
 
 export interface GlobalState {
   userDetails: SignUpTypes;
@@ -83,6 +84,13 @@ export interface GeneralDashboardContext {
   getVariables: () => void;
   activeFormula: string;
   setActiveFormula: (formula: string) => void;
+  deleteVariable: (id: string) => void;
+  deleteFormula: (id: string) => void;
+  deleteZone: (id: string) => void;
+  formulaOnEdit: Formula | null;
+  setFormulaOnEdit: (formula: Formula | null) => void;
+  showFormulaSetup: boolean;
+  setShowFormulaSetup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface Formula {
@@ -94,14 +102,15 @@ export interface Formula {
     value: string;
   }[];
   __v: number;
-  status: boolean;
+  isActive: boolean;
 }
 
 export interface Variable {
   id: string;
+  _id: string;
   category: string;
   variableName: string;
-  fee: { id: string; feeType: string; description: string; status: boolean }[];
+  fee: { id: string; feeType: string; description: string; isActive: boolean }[];
 }
 export interface AdminDetails {
   id: string;

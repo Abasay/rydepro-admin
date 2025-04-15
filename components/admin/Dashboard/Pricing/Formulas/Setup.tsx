@@ -7,7 +7,7 @@ import Textarea from '../../Components/TextArea';
 import FormulaBuilder from './Formulas_Create/FormulaBuilder';
 import { useVariables } from '@/contexts/VariablesContext';
 import { URLS } from '@/utils/lib/urls';
-import { POST_REQUEST } from '@/utils/lib/server-requests';
+import { POST_REQUEST, PUT_REQUEST } from '@/utils/lib/server-requests';
 import Cookies from 'js-cookie';
 import { useDB } from '@/contexts/DBContext';
 import { useDashboardContext } from '@/contexts/DashboardContext';
@@ -19,14 +19,14 @@ const FormulaCreate = ({
   setShowSetup: React.Dispatch<React.SetStateAction<boolean>>;
   selectedFormula: any;
 }) => {
-  const { formulaTokens } = useVariables();
+  const { formulaTokens, setFormulaTokens } = useVariables();
   const { setSuccessText, setErrorText } = useDB();
-  const { getFormulas } = useDashboardContext();
+  const { getFormulas, formulaOnEdit, setFormulaOnEdit } = useDashboardContext();
   const formik = useFormik({
     initialValues: {
-      name: '',
-      description: '',
-      formula: '',
+      name: formulaOnEdit?.formulaName || '',
+      description: formulaOnEdit?.description || '',
+      formula: formulaOnEdit?.mainFormula || [],
       active: false,
     },
     onSubmit: async (values) => {
@@ -34,11 +34,17 @@ const FormulaCreate = ({
         formulaName: values.name,
         description: values.description,
         mainFormula: formulaTokens,
+        isActive: values.active,
       };
 
-      const url = URLS.BASE_URL_ADMIN + URLS.createFormula;
+      const url =
+        formulaOnEdit && formulaOnEdit._id
+          ? URLS.BASE_URL_ADMIN + URLS.updateFormula + formulaOnEdit._id
+          : URLS.BASE_URL_ADMIN + URLS.createFormula;
 
-      await POST_REQUEST(url, payload, Cookies.get('token') || '')
+      const REQUEST = formulaOnEdit && formulaOnEdit._id ? PUT_REQUEST : POST_REQUEST;
+
+      await REQUEST(url, payload, Cookies.get('token') || '')
         .then((result) => {
           if (result.success) {
             setSuccessText(result.message);
@@ -59,6 +65,10 @@ const FormulaCreate = ({
           setTimeout(() => {
             setErrorText('');
           }, 3000);
+        })
+        .finally(() => {
+          setFormulaTokens([]);
+          setFormulaOnEdit(null);
         });
       formik.resetForm();
     },

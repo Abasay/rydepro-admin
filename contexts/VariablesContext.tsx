@@ -15,6 +15,24 @@ interface VariablesContextType {
   feeSections: SectionData[];
   getFeeSections: () => void;
   setFeeSections: React.Dispatch<React.SetStateAction<SectionData[]>>;
+  variableOnEdit: {
+    category: string;
+    feeType: string;
+    description: string;
+    active: boolean;
+    _id: string;
+  };
+  setVariableOnEdit: React.Dispatch<
+    React.SetStateAction<{
+      category: string;
+      feeType: string;
+      description: string;
+      active: boolean;
+      _id: string;
+    }>
+  >;
+  showVariableSetup: boolean;
+  setShowVariableSetup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // const mockVariables: Variable[] = [
@@ -33,6 +51,21 @@ export const VariablesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [formulaTokens, setFormulaTokens] = useState<FormulaToken[]>([]);
 
   const [feeSections, setFeeSections] = React.useState<SectionData[]>([]);
+  const [variableOnEdit, setVariableOnEdit] = useState<{
+    category: string;
+    feeType: string;
+    description: string;
+    active: boolean;
+    _id: string;
+  }>({
+    category: '',
+    feeType: '',
+    description: '',
+    active: false,
+    _id: '',
+  });
+
+  const [showVariableSetup, setShowVariableSetup] = useState<boolean>(false);
 
   const addVariable = (variable: Variable) => {
     setVariables([...variables, variable]);
@@ -102,6 +135,10 @@ export const VariablesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         feeSections,
         getFeeSections,
         setFeeSections,
+        variableOnEdit,
+        setVariableOnEdit,
+        showVariableSetup,
+        setShowVariableSetup,
       }}
     >
       {children}

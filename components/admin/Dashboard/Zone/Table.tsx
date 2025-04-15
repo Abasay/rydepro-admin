@@ -8,8 +8,10 @@ import Back from './back.svg';
 import Froward from './forward.svg';
 import { DeleteIcon } from 'lucide-react';
 import { Zone } from '@/types/GlobalState';
+import { useDashboardContext } from '@/contexts/DashboardContext';
 
 const ZoneTable = ({ zones }: { zones: Zone[] }) => {
+  const { deleteZone } = useDashboardContext();
   return (
     <section className=" mt-6 flex flex-col gap-4 px-6 min-h-[300px] max-h-[771px]">
       <div className=" flex justify-between items-center w-full">
@@ -150,7 +152,7 @@ const ZoneTable = ({ zones }: { zones: Zone[] }) => {
                             />
                           </svg>
                         </button>
-                        <button className="" onClick={() => {}}>
+                        <button className="" onClick={() => deleteZone(item._id)}>
                           {/* <svg
                                 width='20'
                                 height='20'

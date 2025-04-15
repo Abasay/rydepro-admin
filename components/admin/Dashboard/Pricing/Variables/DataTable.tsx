@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { Badge } from '../../LucideUI/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../LucideUI/tooltip';
 import { useDashboardContext } from '@/contexts/DashboardContext';
+import { useVariables } from '@/contexts/VariablesContext';
 
 interface VariableData {
   id: string;
@@ -18,18 +19,24 @@ interface DataTableProps {
 }
 
 export const DataTable: React.FC<DataTableProps> = ({ data }) => {
-  const [dataTodisplay, setDataToDisplay] = React.useState<Variable[]>([]);
-  const { activeVariable } = useDashboardContext();
+  const { activeVariable, deleteVariable, variables } = useDashboardContext();
+
+  const [dataTodisplay, setDataToDisplay] = React.useState<Variable[]>(variables);
+  const { setVariableOnEdit, setShowVariableSetup } = useVariables();
 
   useEffect(() => {
-    const filteredData = data.filter((item) => item.variableName.toLowerCase() === activeVariable.toLowerCase());
+    const filteredData = variables.filter((item) => item.variableName.toLowerCase() === activeVariable.toLowerCase());
     setDataToDisplay(filteredData);
   }, []);
 
   useEffect(() => {
-    const filteredData = data.filter((item) => item.variableName.toLowerCase() === activeVariable.toLowerCase());
+    const filteredData = variables.filter((item) => item.variableName.toLowerCase() === activeVariable.toLowerCase());
     setDataToDisplay(filteredData);
   }, [activeVariable]);
+
+  useEffect(() => {
+    setDataToDisplay(variables.filter((item) => item.variableName.toLowerCase() === activeVariable.toLowerCase()));
+  }, [variables]);
 
   return (
     <div className="w-full border rounded-lg overflow-x-auto">
@@ -58,12 +65,18 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                       <td className="px-6 py-4 text-sm text-gray-800 border-r bg-gray-50" rowSpan={item.fee.length}>
                         <div className="font-medium">{item.category}</div>
                         <div className="text-xs text-gray-500 mt-1">{item.fee.length} fee types</div>
+                        <button
+                          onClick={() => deleteVariable(item._id)}
+                          className=" bg-[#F5F5F7] text-red-500 mt-4 px-4 py-2 border rounded-lg "
+                        >
+                          Delete
+                        </button>
                       </td>
                     ) : null}
                     <td className="px-6 py-4 text-sm text-gray-800 border-r">{fee.feeType}</td>
                     <td className="px-6 py-4 text-sm text-gray-800 border-r">{fee.description}</td>
                     <td className="px-6 py-4 text-sm border-r">
-                      <StatusBadge status={fee.status === true ? 'active' : 'inactive'} />
+                      <StatusBadge status={fee.isActive ? 'active' : 'inactive'} />
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center space-x-2">
@@ -72,7 +85,16 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             <TooltipTrigger asChild>
                               <button
                                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                // onClick={() => onEdit(item, feeIndex)}
+                                onClick={() => {
+                                  setVariableOnEdit({
+                                    category: item.category,
+                                    feeType: fee.feeType,
+                                    description: fee.description,
+                                    active: fee.isActive,
+                                    _id: item._id,
+                                  });
+                                  setShowVariableSetup(true);
+                                }}
                               >
                                 <Edit size={18} className="text-gray-600" />
                               </button>
@@ -86,7 +108,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             <TooltipTrigger asChild>
                               <button
                                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                // onClick={() => onDelete(item.id)}
+                                onClick={() => deleteVariable(item._id)}
                               >
                                 <Trash2 size={18} className="text-gray-600" />
                               </button>
@@ -144,7 +166,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
   );
 };
 
-const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
+export const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   let badgeStyle = '';
 
   switch (status.toLowerCase()) {

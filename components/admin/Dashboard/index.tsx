@@ -40,7 +40,7 @@ import VariableSetup from './Pricing/Variables';
 import VariableCreate from './Pricing/Variables/Setup';
 import FormulaSetup from './Pricing/Formulas';
 import FormulaCreate from './Pricing/Formulas/Setup';
-import { VariablesProvider } from '@/contexts/VariablesContext';
+import { useVariables, VariablesProvider } from '@/contexts/VariablesContext';
 import FormulaPricing from './Pricing/ZonePricing/FormulaPricing';
 import ZonePricing from './Pricing/ZonePricing';
 import dynamic from 'next/dynamic';
@@ -112,7 +112,19 @@ const Dashboard = () => {
 
   const { userLoginCredentials, setUserLoginCredentials } = useLogInContext();
 
-  const { isSettingsClicked, setSettings, settings, authChanged, zones, setZones } = useDashboardContext();
+  const {
+    isSettingsClicked,
+    setSettings,
+    settings,
+    authChanged,
+    zones,
+    setZones,
+    setShowFormulaSetup,
+    showFormulaSetup,
+    formulaOnEdit,
+    setFormulaOnEdit,
+  } = useDashboardContext();
+  const { showVariableSetup, setShowVariableSetup, setVariableOnEdit } = useVariables();
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLaptop, setIsLaptop] = useState<boolean>(false); // Initialize to false
@@ -127,10 +139,8 @@ const Dashboard = () => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
 
-  const [showVariables, setShowVariables] = useState<boolean>(false);
   const [selectedVariable, setSelectedVariable] = useState<any>(null);
   const [showSetup, setShowSetup] = useState<boolean>(false);
-  const [showFormula, setShowFormula] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<any>(null);
 
   const getServices = async () => {
@@ -337,10 +347,10 @@ const Dashboard = () => {
         return <Drivers />;
 
       case 'Variable Setup':
-        return <VariableSetup setShowSetup={setShowVariables} />;
+        return <VariableSetup setShowSetup={setShowVariableSetup} />;
 
       case 'Formula Setup':
-        return <FormulaSetup setShowSetup={setShowFormula} />;
+        return <FormulaSetup setShowSetup={setShowFormulaSetup} />;
 
       case 'Zone Pricing':
         return (
@@ -490,30 +500,45 @@ const Dashboard = () => {
         </Dialog>
 
         <Dialog
-          open={showVariables}
+          open={showVariableSetup}
           onOpenChange={() => {
             setSelectedVariable(null);
-            setShowVariables(false);
+            setShowVariableSetup(false);
+            setVariableOnEdit({
+              category: '',
+              feeType: '',
+              description: '',
+              active: false,
+              _id: '',
+            });
           }}
         >
           <DialogContent className="w-[782px] max-w-[782px] p-4 bg-[#F5F5F5]">
-            <VariableCreate setShowSetup={setShowVariables} selectedVariable={selectedVariable} />
+            <VariableCreate setShowSetup={setShowVariableSetup} selectedVariable={selectedVariable} />
           </DialogContent>
         </Dialog>
 
-        <VariablesProvider>
-          <Dialog
-            open={showFormula}
-            onOpenChange={() => {
-              setSelectedFormula(null);
-              setShowFormula(false);
-            }}
-          >
-            <DialogContent className="w-[782px] max-w-[782px] p-4 bg-[#F5F5F5]">
-              <FormulaCreate setShowSetup={setShowFormula} selectedFormula={selectedFormula} />
-            </DialogContent>
-          </Dialog>
-        </VariablesProvider>
+        {/* <VariablesProvider> */}
+        <Dialog
+          open={showFormulaSetup}
+          onOpenChange={() => {
+            setSelectedFormula(null);
+            setShowFormulaSetup(false);
+            setFormulaOnEdit({
+              formulaName: '',
+              description: '',
+              mainFormula: [],
+              isActive: false,
+              _id: '',
+              __v: 0,
+            });
+          }}
+        >
+          <DialogContent className="w-[782px] max-w-[782px] p-4 bg-[#F5F5F5]">
+            <FormulaCreate setShowSetup={setShowFormulaSetup} selectedFormula={formulaOnEdit} />
+          </DialogContent>
+        </Dialog>
+        {/* </VariablesProvider> */}
       </React.Fragment>
     );
   }
@@ -528,4 +553,14 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+const DashboardWrapper = () => {
+  return (
+    <DBProvider>
+      <VariablesProvider>
+        <Dashboard />
+      </VariablesProvider>
+    </DBProvider>
+  );
+};
+
+export default DashboardWrapper;

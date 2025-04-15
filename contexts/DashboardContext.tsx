@@ -3,7 +3,7 @@
 
 import { Service, Vehicle } from '@/components/admin/Dashboard';
 import { AdminDetails, GeneralDashboardContext, Variable, Zone } from '@/types/GlobalState';
-import { GET_REQUEST } from '@/utils/lib/server-requests';
+import { DELETE_REQUEST, GET_REQUEST } from '@/utils/lib/server-requests';
 import { URLS } from '@/utils/lib/urls';
 import { getRequest } from '@/utils/requests';
 import { AdminUrls } from '@/utils/urls';
@@ -31,6 +31,9 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const [zones, setZones] = useState<Zone[]>([]);
   const [activeVariable, setActiveVariable] = useState<string>('Variable 1');
   const [activeFormula, setActiveFormula] = useState<string>('');
+
+  const [formulaOnEdit, setFormulaOnEdit] = useState<any>({});
+  const [showFormulaSetup, setShowFormulaSetup] = useState<boolean>(false);
 
   const [formulas, setFormulas] = useState<any[]>([]);
 
@@ -124,7 +127,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     const url = URLS.BASE_URL_ADMIN + URLS.formulas;
     await GET_REQUEST(url, token)
       .then((result: any) => {
-        if (result.status === 200) {
+        if (result.success) {
           setFormulas(result.formulas);
           setActiveFormula(result.formulas[0].formulaName);
         } else {
@@ -196,6 +199,57 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const deleteZone = async (id: string) => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.deleteZone + id;
+    await DELETE_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.success) {
+          toast.success(result.message);
+          getZones();
+        } else {
+          toast.error(result.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteVariable = async (id: string) => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.deleteVariable + id;
+    await DELETE_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.success) {
+          toast.success(result.message);
+          getVariables();
+        } else {
+          toast.error(result.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteFormula = async (id: string) => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.deleteFormula + id;
+    await DELETE_REQUEST(url, token)
+      .then((result: any) => {
+        if (result.success) {
+          toast.success(result.message);
+          getFormulas();
+        } else {
+          toast.error(result.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     getAdmin();
     getVehicles();
@@ -244,6 +298,13 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         getVariables,
         activeFormula,
         setActiveFormula,
+        deleteVariable,
+        deleteFormula,
+        deleteZone,
+        formulaOnEdit,
+        setFormulaOnEdit,
+        showFormulaSetup,
+        setShowFormulaSetup,
       }}
     >
       {children}

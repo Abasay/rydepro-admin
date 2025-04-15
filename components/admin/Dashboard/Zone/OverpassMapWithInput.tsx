@@ -433,11 +433,21 @@ const OverpassMap = () => {
         bounds,
       });
 
-      const country = suggestion.display_name.split(',').slice(-1)[0].trim();
-      const state = suggestion.display_name.split(',').slice(-2)[0].trim();
-      const city = suggestion.display_name.split(',').slice(-3)[0].trim();
-      const county = suggestion.display_name.split(',').slice(-4)[0].trim();
-      setZoneType(suggestion?.osm_type || '');
+      // const country = suggestion.display_name.split(',').slice(-1)[0].trim();
+      // const state = suggestion.display_name.split(',').slice(-2)[0].trim();
+      // const city = suggestion.display_name.split(',').slice(-3)[0].trim();
+      // const county = suggestion.display_name.split(',').slice(-4)[0].trim();
+      // setZoneType(suggestion?.osm_type || '');
+
+      const country = (suggestion as any).address?.country || '';
+      const state = (suggestion as any).address?.state || '';
+      const city =
+        (suggestion as any).address?.city ||
+        (suggestion as any).address?.town ||
+        (suggestion as any).address?.village ||
+        '';
+      const county = (suggestion as any).address?.county || '';
+      setZoneType((suggestion as any)?.osm_type || '');
 
       formik.setValues({
         ...formik.values,
@@ -735,7 +745,7 @@ const OverpassMap = () => {
                   options={options}
                   value={options.find((option) => option.value === formik.values.timeZone)}
                   onChange={(option) => {
-                    formik.setFieldValue('timeZone', option?.value || '');
+                    formik.setFieldValue('timeZone', option?.label || '');
                   }}
                   className="w-full min-w-max z-50"
                   placeholder="Select TimeZone"
