@@ -433,21 +433,21 @@ const OverpassMap = () => {
         bounds,
       });
 
-      // const country = suggestion.display_name.split(',').slice(-1)[0].trim();
-      // const state = suggestion.display_name.split(',').slice(-2)[0].trim();
-      // const city = suggestion.display_name.split(',').slice(-3)[0].trim();
-      // const county = suggestion.display_name.split(',').slice(-4)[0].trim();
-      // setZoneType(suggestion?.osm_type || '');
+      const country = suggestion.display_name.split(',').slice(-1)[0].trim();
+      const state = suggestion.display_name.split(',').slice(-2)[0].trim();
+      const city = suggestion.display_name.split(',').slice(-3)[0].trim();
+      const county = suggestion.display_name.split(',').slice(-4)[0].trim();
+      setZoneType(suggestion?.osm_type || '');
 
-      const country = (suggestion as any).address?.country || '';
-      const state = (suggestion as any).address?.state || '';
-      const city =
-        (suggestion as any).address?.city ||
-        (suggestion as any).address?.town ||
-        (suggestion as any).address?.village ||
-        '';
-      const county = (suggestion as any).address?.county || '';
-      setZoneType((suggestion as any)?.osm_type || '');
+      // const country = (suggestion as any).address?.country || '';
+      // const state = (suggestion as any).address?.state || '';
+      // const city =
+      //   (suggestion as any).address?.city ||
+      //   (suggestion as any).address?.town ||
+      //   (suggestion as any).address?.village ||
+      //   '';
+      // const county = (suggestion as any).address?.county || '';
+      // setZoneType((suggestion as any)?.osm_type || '');
 
       formik.setValues({
         ...formik.values,
@@ -681,7 +681,7 @@ const OverpassMap = () => {
                 name="zone"
                 value={formik.values.zone}
                 onChange={(e) => formik.setValues({ ...formik.values, zone: e.target.value })}
-                important
+                // important
               />
 
               <Input
@@ -690,8 +690,8 @@ const OverpassMap = () => {
                 name="country"
                 value={formik.values.country}
                 onChange={(e) => formik.setValues({ ...formik.values, country: e.target.value })}
-                important
-                disabled={!drawMode && !drawingComplete}
+                // important
+                // disabled={!drawMode && !drawingComplete}
               />
 
               <Input
@@ -700,8 +700,8 @@ const OverpassMap = () => {
                 name="state"
                 value={formik.values.state}
                 onChange={(e) => formik.setValues({ ...formik.values, state: e.target.value })}
-                important
-                disabled={!drawMode && !drawingComplete}
+                // important
+                // disabled={!drawMode && !drawingComplete}
               />
 
               <Input
@@ -710,8 +710,8 @@ const OverpassMap = () => {
                 name="county"
                 value={formik.values.county}
                 onChange={(e) => formik.setValues({ ...formik.values, county: e.target.value })}
-                important
-                disabled={!drawMode && !drawingComplete}
+                // important
+                // disabled={!drawMode && !drawingComplete}
               />
 
               <Input
@@ -720,8 +720,8 @@ const OverpassMap = () => {
                 name="city"
                 value={formik.values.city}
                 onChange={(e) => formik.setValues({ ...formik.values, city: e.target.value })}
-                important
-                disabled={!drawMode && !drawingComplete}
+                // important
+                // disabled={!drawMode && !drawingComplete}
               />
 
               <div className=" flex flex-col gap-3 w-[181px] items-start ">
