@@ -164,6 +164,10 @@ const Sidebar = () => {
               title: 'Zone Pricing',
               Icon: () => <></>,
             },
+            {
+              title: 'Pricing Table',
+              Icon: () => <></>,
+            },
           ],
         },
       ],
@@ -215,6 +219,28 @@ const Sidebar = () => {
             </svg>
           ),
           subs: [{ title: 'Bookings List', Icon: () => <></> }],
+        },
+      ],
+    },
+
+    {
+      headerTitle: 'RYDEPRO',
+      sideSubs: [
+        {
+          header: 'Roles',
+          HeaderIcon: () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M5 8C5 6.34315 6.34315 5 8 5H16C17.6569 5 19 6.34315 19 8V16C19 17.6569 17.6569 19 16 19H8C6.34315 19 5 17.6569 5 16V8ZM8 6C6.89543 6 6 6.89543 6 8V9.05767L11.5 9.00478V6H8ZM12.5 6V14H18V8C18 6.89543 17.1046 6 16 6H12.5ZM18 15H12.5V18H16C17.1046 18 18 17.1046 18 16V15ZM11.5 18V10.0048L6 10.0577V16C6 17.1046 6.89543 18 8 18H11.5Z"
+                fill="#0E0E0E"
+              />
+            </svg>
+          ),
+          subs: [
+            { title: 'Role Management', Icon: () => <></> },
+            { title: 'Employee Table List', Icon: () => <></> },
+            { title: 'Employee Details', Icon: () => <></> },
+          ],
         },
       ],
     },

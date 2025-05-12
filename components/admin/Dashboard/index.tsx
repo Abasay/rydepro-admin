@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import Sidebar from '@/components/admin/Dashboard/Sidebar/sidebar';
+import Sidebar from '@/components/admin/Dashboard/Sidebar';
 import Header from '@/components/admin/Dashboard/header/header';
 import { useDashboardContext } from '@/contexts/DashboardContext';
 import styles from '@/styles/common.module.css';
@@ -44,6 +44,12 @@ import { useVariables, VariablesProvider } from '@/contexts/VariablesContext';
 import FormulaPricing from './Pricing/ZonePricing/FormulaPricing';
 import ZonePricing from './Pricing/ZonePricing';
 import dynamic from 'next/dynamic';
+import PricingTable from './Pricing/ZonePricing/PricingTable';
+import EmployeeList from './RoleManagement/EmployeeList';
+import RoleManagement from './RoleManagement';
+import { RoleManagementProvider } from '@/contexts/RoleManagementContext';
+import EmployeeTable from './RoleManagement/EmployeeTable';
+import EmployeeDetails from './RoleManagement/EmployeeDetails';
 
 const OverpassMap = dynamic(() => import('./Zone/OverpassMapWithInput'), { ssr: false });
 
@@ -359,6 +365,33 @@ const Dashboard = () => {
           </VariablesProvider>
         );
 
+      case 'Role Management':
+        return (
+          <RoleManagementProvider>
+            <RoleManagement />
+          </RoleManagementProvider>
+        );
+
+      case 'Employee Table List':
+        return (
+          <RoleManagementProvider>
+            <EmployeeTable />
+          </RoleManagementProvider>
+        );
+
+      case 'Pricing Table':
+        return (
+          <VariablesProvider>
+            <PricingTable />
+          </VariablesProvider>
+        );
+
+      case 'Employee Details':
+        return (
+          <RoleManagementProvider>
+            <EmployeeDetails />
+          </RoleManagementProvider>
+        );
       default:
         return null;
     }
