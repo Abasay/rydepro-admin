@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useVariables } from '@/contexts/VariablesContext';
-import { FormulaToken, Formula, OperatorType } from '@/types/DashboardTypes/formulaTypes';
+import { FormulaToken, Formula, OperatorType, Variable } from '@/types/DashboardTypes/formulaTypes';
 import { canAddToken, isValidFormula, generateId, canRemoveToken } from '@/utils/formulaUtils';
 
 import {
@@ -29,6 +29,24 @@ const FormulaBuilder: React.FC<FormulaBuilderProps> = ({ onSave, onCancel, initi
   const { variables, formulaTokens, setFormulaTokens } = useVariables();
   const [formulaName, setFormulaName] = useState(initialFormula?.name || '');
   // const [formulaTokens, setFormulaTokens] = useState<FormulaToken[]>(initialFormula?.tokens || []);
+
+  const [newVariables, setNewVariables] = useState<Variable[]>([
+    ...variables,
+    {
+      id: '1000',
+      feeType: 'Distance',
+      description: 'Distance in miles/kilometers',
+      value: 0,
+      _id: '1000',
+    },
+    {
+      id: '1001',
+      feeType: 'Duration',
+      description: 'Duration in minutes/hours',
+      value: 0,
+      _id: '1001',
+    },
+  ]);
   const [description, setDescription] = useState(initialFormula?.description || '');
   const [active, setActive] = useState(initialFormula?.active || false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +61,7 @@ const FormulaBuilder: React.FC<FormulaBuilderProps> = ({ onSave, onCancel, initi
   ];
 
   const handleAddVariable = (variableId: string) => {
-    const variable = variables.find((v) => v.id === variableId);
+    const variable = newVariables.find((v) => v.id === variableId);
     if (!variable) return;
 
     const newToken: FormulaToken = {
@@ -195,7 +213,7 @@ const FormulaBuilder: React.FC<FormulaBuilderProps> = ({ onSave, onCancel, initi
               <SelectValue placeholder="Select a variable" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              {variables.map((variable) => (
+              {newVariables.map((variable) => (
                 <SelectItem key={variable?.id} value={variable?.id}>
                   {variable?.feeType} ({variable?.description})
                 </SelectItem>
