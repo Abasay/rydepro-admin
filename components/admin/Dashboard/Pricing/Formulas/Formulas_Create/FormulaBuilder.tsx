@@ -34,14 +34,14 @@ const FormulaBuilder: React.FC<FormulaBuilderProps> = ({ onSave, onCancel, initi
     ...variables,
     {
       id: '1000',
-      feeType: 'Distance',
+      feeType: 'distance',
       description: 'Distance in miles/kilometers',
       value: 0,
       _id: '1000',
     },
     {
       id: '1001',
-      feeType: 'Duration',
+      feeType: 'duration',
       description: 'Duration in minutes/hours',
       value: 0,
       _id: '1001',
