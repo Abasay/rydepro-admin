@@ -175,12 +175,12 @@ const Zone = () => {
         features: [
           {
             properties: {
-              'fill-opacity': 0.33,
-              fillColor: '#bf4040',
-              opacity: 0.33,
-              fill: '#bf4040',
-              fillOpacity: 0.33,
-              color: '#bf4040',
+              'fill-opacity': 0.5, // Medium opacity for better visibility
+              fillColor: '#3399FF', // Bright sky blue
+              opacity: 0.5,
+              fill: '#3399FF', // Fill color
+              fillOpacity: 0.5,
+              color: '#003366', // Dark navy blue outline for contrast
               contour: 5,
               metric: 'time',
             },
