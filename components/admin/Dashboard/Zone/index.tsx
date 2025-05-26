@@ -390,9 +390,11 @@ const Zone = () => {
                 id="address-shape-layer"
                 type="fill"
                 paint={{
-                  'fill-color': '#D52323',
-                  'fill-opacity': 0.6,
-                  'fill-outline-color': '#008',
+                  'fill-color': '#3399FF', // Bright sky blue
+                  'fill-opacity': 0.5, // Medium opacity for better visibility
+                  'fill-antialias': true,
+                  'fill-translate': [0, 0],
+                  'fill-translate-anchor': 'viewport',
                 }}
               />
             </Source>
