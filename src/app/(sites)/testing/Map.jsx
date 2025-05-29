@@ -184,7 +184,7 @@ const GoogleMapsAutocomplete = () => {
         {/* API Key Notice */}
         <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
           <p className="text-sm text-yellow-800">
-            <strong>Note:</strong> Replace "YOUR_GOOGLE_MAPS_API_KEY" with your actual Google Maps API key to enable
+            <strong>Note:</strong> Replace YOUR_GOOGLE_MAPS_API_KEY with your actual Google Maps API key to enable
             functionality.
           </p>
         </div>
