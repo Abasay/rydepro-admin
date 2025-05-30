@@ -72,6 +72,7 @@ const ExtraConfig = () => {
         variable: '',
         weekDays: [],
       },
+      distanceUnit: 'miles',
     },
     onSubmit: async (values) => {
       const payload = {
@@ -193,6 +194,28 @@ const ExtraConfig = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <div className="flex gap-2 mt-4"></div>
+              <button
+                type="button"
+                className={`px-4 py-2 rounded ${
+                  formik.values.distanceUnit === 'miles' ? 'bg-black text-white' : 'bg-gray-200 text-black'
+                }`}
+                onClick={() => formik.setFieldValue('distanceUnit', 'miles')}
+              >
+                Miles
+              </button>
+              <button
+                type="button"
+                className={`px-4 py-2 rounded ${
+                  formik.values.distanceUnit === 'km' ? 'bg-black text-white' : 'bg-gray-200 text-black'
+                }`}
+                onClick={() => formik.setFieldValue('distanceUnit', 'km')}
+              >
+                KM
+              </button>
             </div>
           </Wrapper>
 
