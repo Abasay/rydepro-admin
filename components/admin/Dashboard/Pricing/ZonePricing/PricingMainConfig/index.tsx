@@ -80,6 +80,10 @@ const ExtraConfig = () => {
         pricingFee: feeSections,
         formulaName: activeFormula,
         activeVariable: activeVariable,
+        hourly: {
+          minHours: values.minHours,
+          maxHours: values.maxHours,
+        },
       };
 
       const url = URLS.BASE_URL_ADMIN + URLS.setPricing;
