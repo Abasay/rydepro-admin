@@ -46,6 +46,13 @@ const FormulaBuilder: React.FC<FormulaBuilderProps> = ({ onSave, onCancel, initi
       value: 0,
       _id: '1001',
     },
+    {
+      id: '1002',
+      feeType: 'hourlyDuration',
+      description: 'Hourly Duration for hourly rides',
+      value: 0,
+      _id: '1002',
+    },
   ]);
   const [description, setDescription] = useState(initialFormula?.description || '');
   const [active, setActive] = useState(initialFormula?.active || false);
