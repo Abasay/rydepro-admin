@@ -14,6 +14,10 @@ interface DBContextProps {
   setErrorText: (errorText: string) => void;
   successText: string;
   setSuccessText: (successText: string) => void;
+  showSingleDriver: boolean;
+  setShowSingleDriver: (showSingleDriver: boolean) => void;
+  showSingleRider: boolean;
+  setShowSingleRider: (showSingleRider: boolean) => void;
 }
 
 const DBContext = createContext<DBContextProps | undefined>(undefined);
@@ -26,6 +30,8 @@ export const DBProvider = ({ children }: { children: ReactNode }) => {
 
   const [errorText, setErrorText] = useState<string>('');
   const [successText, setSuccessText] = useState<string>('');
+  const [showSingleDriver, setShowSingleDriver] = useState<boolean>(false);
+  const [showSingleRider, setShowSingleRider] = useState<boolean>(false);
 
   return (
     <DBContext.Provider
@@ -42,6 +48,10 @@ export const DBProvider = ({ children }: { children: ReactNode }) => {
         setErrorText,
         successText,
         setSuccessText,
+        showSingleDriver,
+        setShowSingleDriver,
+        showSingleRider,
+        setShowSingleRider,
       }}
     >
       {children}

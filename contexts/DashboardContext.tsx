@@ -34,6 +34,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
   const [formulaOnEdit, setFormulaOnEdit] = useState<any>({});
   const [showFormulaSetup, setShowFormulaSetup] = useState<boolean>(false);
+  const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
 
   const [formulas, setFormulas] = useState<any[]>([]);
 
@@ -233,6 +234,25 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
+  const deleteFeeType = async (id: string, feeType: string) => {
+    const token = Cookies.get('token') || '';
+    const url = URLS.BASE_URL_ADMIN + URLS.deleteFeeType + id;
+    await DELETE_REQUEST(url, token, {
+      feeType: feeType,
+    })
+      .then((result: any) => {
+        if (result.success) {
+          toast.success(result.message);
+          getVariables();
+        } else {
+          toast.error(result.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const deleteFormula = async (id: string) => {
     const token = Cookies.get('token') || '';
     const url = URLS.BASE_URL_ADMIN + URLS.deleteFormula + id;
@@ -305,6 +325,9 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         setFormulaOnEdit,
         showFormulaSetup,
         setShowFormulaSetup,
+        selectedZone,
+        setSelectedZone,
+        deleteFeeType,
       }}
     >
       {children}

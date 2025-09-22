@@ -1,17 +1,82 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Mail from './mail.svg';
 import Print from './print.svg';
 import Delete from './delete.svg';
 import searchIcon from '@/components/admin/Dashboard/svgs/search.svg';
 import Back from './back.svg';
 import Froward from './forward.svg';
-import { DeleteIcon } from 'lucide-react';
+import { DeleteIcon, Trash2Icon } from 'lucide-react';
 import { Zone } from '@/types/GlobalState';
 import { useDashboardContext } from '@/contexts/DashboardContext';
+import { DELETE_REQUEST, GET_REQUEST } from '@/utils/lib/server-requests';
+import { URLS } from '@/utils/lib/urls';
+import Cookies from 'js-cookie';
+import { useDB } from '@/contexts/DBContext';
+import { PricingInterface } from '@/types/DashboardTypes/tables';
 
 const PricingTable = () => {
-  const pricings: any[] = [];
+  const [pricings, setPricings] = React.useState<PricingInterface[]>([]);
+  const [initialPricings, setInitialPricings] = React.useState<PricingInterface[]>([]);
+  const [fetching, setFetching] = React.useState(false);
+  const [selectedPricings, setSelectedPricings] = useState<string[]>([]);
+  const [deletingBulk, setDeletingBulk] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const { setSuccessText, setErrorText } = useDB();
+  const getPricings = async () => {
+    const url = URLS.BASE_URL_ADMIN + URLS.getPricings;
+    setFetching(true);
+
+    await GET_REQUEST(url, Cookies.get('token') || '')
+      .then((result) => {
+        if (result.success) {
+          setSuccessText('Pricings fetched successfully');
+          setPricings(result.prices);
+          setInitialPricings(result.prices);
+        }
+      })
+      .catch((err) => {
+        setErrorText(err.message || 'Error fetching pricings');
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setSuccessText('');
+          setErrorText('');
+        }, 3000);
+        setFetching(false);
+      });
+  };
+
+  const deleteAllSelected = () => {
+    setDeletingBulk(true);
+    selectedPricings.forEach((id) => {
+      deletePricing(id);
+    });
+  };
+
+  const deletePricing = async (id: string) => {
+    const url = URLS.BASE_URL_ADMIN + URLS.deletePricing + id;
+    await DELETE_REQUEST(url, Cookies.get('token') || '')
+      .then((result) => {
+        if (result.success) setSuccessText('Pricing deleted successfully');
+        getPricings();
+      })
+      .catch((err) => {
+        setErrorText(err.message || 'Error deleting pricing');
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setSuccessText('');
+          setErrorText('');
+        }, 3000);
+      });
+  };
+
+  useEffect(() => {
+    getPricings();
+  }, []);
+
   return (
     <section className=" mt-6 flex flex-col gap-4 px-6 min-h-[300px] max-h-[771px]">
       <div className=" flex justify-between items-center w-full">
@@ -28,7 +93,10 @@ const PricingTable = () => {
               {/* <Print className=' w-4 h-[13px]' /> */}
               <Image src={Print} alt="" width={12} height={12} className="w-[12px] h-[12px] " />
             </button>
-            <button className=" w-[68px] h-9 border border-[#DADADA]  py-2 px-6 bg-transparent rounded-lg grid place-content-center items-center">
+            <button
+              onClick={deleteAllSelected}
+              className=" w-[68px] h-9 border border-[#DADADA]  py-2 px-6 bg-transparent rounded-lg grid place-content-center items-center"
+            >
               {/* <Delete className=' w-4 h-[13px]' /> */}
               <Image src={Delete} alt="" width={12} height={12} className="w-[12px] h-[12px] " />
             </button>
@@ -39,6 +107,24 @@ const PricingTable = () => {
             <input
               type="search"
               name=""
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+
+                if (e.target.value === '') {
+                  getPricings();
+                } else {
+                  const filtered = initialPricings.filter((item) => {
+                    return (
+                      item.zoneFrom.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                      item.zoneTo.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                      item._id.includes(e.target.value) ||
+                      item.vehicleId.toLowerCase().includes(e.target.value.toLowerCase())
+                    );
+                  });
+                  setPricings(filtered);
+                }
+              }}
               id=""
               className=" focus-within:outline-none outline-none text-base font-normal text-[#0E0E0E] leading-[24px] placeholder:text-[#AAAAAA]"
               placeholder="Search for any document by name, email etc"
@@ -53,8 +139,14 @@ const PricingTable = () => {
                 <th className="py-2 px-4 mr-4">
                   <input
                     type="checkbox"
-                    checked={false}
-                    onChange={() => {}}
+                    checked={pricings.length > 0 && selectedPricings.length === pricings.length}
+                    onChange={() => {
+                      if (selectedPricings.length === pricings.length) {
+                        setSelectedPricings([]);
+                      } else {
+                        setSelectedPricings(pricings.map((item) => item._id));
+                      }
+                    }}
                     className="border-[0.67px] bg-transparent rounded-[2.67px] h-4 w-4 border-[#DADADA] p-[5.33px]"
                   />
                 </th>
@@ -83,11 +175,11 @@ const PricingTable = () => {
                     <span>Time Zone</span>
                     <UpsAndDowns />
                   </th>
-                  <th className="py-2 min-w-[130px] max-w-[130px] flex gap-2">
+                  <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
                     <span>Start Hour</span>
                     <UpsAndDowns />
                   </th>
-                  <th className="py-2 min-w-[130px] max-w-[130px] flex gap-2">
+                  <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
                     <span>End Hour</span>
                     <UpsAndDowns />
                   </th>
@@ -97,7 +189,7 @@ const PricingTable = () => {
                   </th>
                   <th className="py-2 min-w-[128px] max-w-[128px] flex gap-2">End Date</th>
                 </th>
-                <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
+                <th className="py-2 min-w-[160px] max-w-[160px] border flex gap-2">
                   <span>Week Days</span>
                   <UpsAndDowns />
                 </th>
@@ -157,36 +249,36 @@ const PricingTable = () => {
                   <span>Peak Variable</span>
                   <UpsAndDowns />
                 </th>
-                <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
+                <th className="py-2 min-w-[210px] max-w-[210px] flex gap-2">
                   <span>Peak Week Days</span>
                   <UpsAndDowns />
                 </th>
                 <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
-                  <span>Surge Start </span>
+                  <span>Surge Start (hrs)</span>
                   <UpsAndDowns />
                 </th>
                 <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
-                  <span>Surge End </span>
+                  <span>Surge End (hrs)</span>
+                  <UpsAndDowns />
+                </th>
+                <th className="py-2 min-w-[210px] max-w-[210px] flex gap-2">
+                  <span>Surge Start Date</span>
                   <UpsAndDowns />
                 </th>
                 <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
-                  <span>Surge Start</span>
-                  <UpsAndDowns />
-                </th>
-                <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
-                  <span>Surge End</span>
+                  <span>Surge End Date</span>
                   <UpsAndDowns />
                 </th>
                 <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
                   <span>Surge Variable</span>
                   <UpsAndDowns />
                 </th>
-                <th className="py-2 min-w-[180px] max-w-[180px] flex gap-2">
+                <th className="py-2 min-w-[240px] max-w-[240px] flex gap-2">
                   <span>Surge Week Days</span>
                   <UpsAndDowns />
                 </th>
 
-                <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
+                <th className="py-2 min-w-[200px] max-w-[200px] flex gap-2">
                   <span>Fee Name</span>
                   <UpsAndDowns />
                 </th>
@@ -194,7 +286,7 @@ const PricingTable = () => {
                   <span>Currency</span>
                   <UpsAndDowns />
                 </th>
-                <th className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
+                <th className="py-2 min-w-[240px] max-w-[240px] flex gap-2">
                   <span>Formula Name</span>
                   <UpsAndDowns />
                 </th>
@@ -210,8 +302,14 @@ const PricingTable = () => {
                     <td className="py-3 mr-4 px-4">
                       <input
                         type="checkbox"
-                        checked={false}
-                        onChange={() => {}}
+                        checked={selectedPricings.includes(item._id)}
+                        onChange={() => {
+                          if (selectedPricings.includes(item._id)) {
+                            setSelectedPricings(selectedPricings.filter((id) => id !== item._id));
+                          } else {
+                            setSelectedPricings([...selectedPricings, item._id]);
+                          }
+                        }}
                         className="border-[0.67px] rounded-[2.67px] h-4 w-4 border-[#DADADA] p-[5.33px] accent-[#0E0E0E]"
                       />
                     </td>
@@ -219,15 +317,18 @@ const PricingTable = () => {
                       <td className="py-3 items-start  min-w-12 max-w-12">{index + 1}</td>
                       <td className="py-3 min-w-[140px] max-w-[140px]">{item.zoneFrom}</td>
                       <td className="py-3 min-w-[140px] max-w-[140px]">{item.zoneTo}</td>
-                      <td className="py-3 min-w-[200px] max-w-[200px]">{item.vehicleCategory}</td>
-                      <td className="py-3 min-w-[220px] max-w-[220px]">{item.serviceType}</td>
+                      <td className="py-3 min-w-[200px] max-w-[200px]">{item.vehicleId}</td>
+                      <td className="py-3 min-w-[220px] max-w-[220px]">{item.serviceName}</td>
+                      <td className="py-3 min-w-[160px] max-w-[160px]">{'GMT'}</td>
                       <td className="py-3 min-w-[160px] max-w-[160px]">{item.startHour}</td>
                       <td className="py-3 min-w-[160px] max-w-[160px]">{item.endHour}</td>
                       <td className="py-3 min-w-[130px] max-w-[130px]">
                         {new Date(item.startDate).toLocaleDateString()}
                       </td>
-                      <td className="py-3 min-w-[130px] max-w-[13px]">{new Date(item.endDate).toLocaleDateString()}</td>
-                      <td className="py-2 min-w-[160px] max-w-[160px] flex gap-2">
+                      <td className="py-3 min-w-[128px] max-w-[128px]">
+                        {new Date(item.endDate).toLocaleDateString()}
+                      </td>
+                      <td className="py-2 min-w-[160px] max-w-[160px] border flex gap-2">
                         <span className="flex gap-2 items-center">
                           {item.weekDays.map((day: any, index: number) => (
                             <span key={index} className="text-[#0E0E0E] text-sm font-normal">
@@ -236,32 +337,32 @@ const PricingTable = () => {
                           ))}
                         </span>
                       </td>
-                      <td className="py-3 min-w-[130px] max-w-[130px]">{item.minHours}</td>
-                      <td className="py-3 min-w-[130px] max-w-[130px]">{item.maxHours}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.mileRestrictions}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.timeRestrictions}</td>
-                      <td className="py-3 min-w-[130px] max-w-[130px]">{item.minFare}</td>
-                      <td className="py-3 min-w-[130px] max-w-[130px]">{item.maxFare}</td>
-                      <td className="py-3 min-w-[130px] max-w-[130px]">{item.variable}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.waitTime.minimum}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.waitTime.maximum}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.peakHours.startHour}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.peakHours.endHour}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.peakHours.startDate}</td>
+                      <td className="py-3 min-w-[60px] max-w-[60px] border">{item.hourly.minHours}</td>
+                      <td className="py-3 min-w-[70px] max-w-[60px] border">{item.hourly.maxHours}</td>
+                      <td className="py-3 min-w-[150px] max-w-[150px]">{item.mileRestrictions}</td>
+                      <td className="py-3 min-w-[120px] max-w-[1280px]">{item.timeRestrictions}</td>
+                      <td className="py-3 min-w-[80px] max-w-[80px]">{item.minFare || '0'}</td>
+                      <td className="py-3 min-w-[80px] max-w-[80px]">{item.maxFare || '0'}</td>
+                      <td className="py-3 min-w-[100px] max-w-[100px]">{item.variable}</td>
+                      <td className="py-3 min-w-[100px] max-w-[100px]">{item.waitTime.minimum}</td>
+                      <td className="py-3 min-w-[100px] max-w-[100px]">{item.waitTime.maximum}</td>
+                      <td className="py-3 min-w-[120px] max-w-[120px]">{item.peakHours.startHour}</td>
+                      <td className="py-3 min-w-[100px] max-w-[100px]">{item.peakHours.endHour}</td>
+                      <td className="py-3 min-w-[110px] max-w-[110px]">{item.peakHours.startDate}</td>
                       <td className="py-3 min-w-[160px] max-w-[160px]">{item.peakHours.endDate}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.peakHours.variable}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">
+                      <td className="py-3 min-w-[70px] max-w-[70px]">{item.peakHours.variable}</td>
+                      <td className="py-3 min-w-[160px] max-w-[160px] border">
                         {item.peakHours.weekDays.map((day: any, index: number) => (
                           <span key={index} className="text-[#0E0E0E] text-sm font-normal">
                             {day}
                           </span>
                         ))}
                       </td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.surge.startHour}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.surge.endHour}</td>
+                      <td className="py-3 min-w-[110px] max-w-[110px]">{item.surge.startHour}</td>
+                      <td className="py-3 min-w-[110px] max-w-[110px]">{item.surge.endHour}</td>
                       <td className="py-3 min-w-[160px] max-w-[160px]">{item.surge.startDate}</td>
                       <td className="py-3 min-w-[160px] max-w-[160px]">{item.surge.endDate}</td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.surge.variable}</td>
+                      <td className="py-3 min-w-[80px] max-w-[80px]">{item.surge.variable}</td>
                       <td className="py-3 min-w-[180px] max-w-[180px]">
                         {item.surge.weekDays.map((day: any, index: number) => (
                           <span key={index} className="text-[#0E0E0E] text-sm font-normal">
@@ -269,8 +370,10 @@ const PricingTable = () => {
                           </span>
                         ))}
                       </td>
-                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.feeName}</td>
-                      <td className="py-3 min-w-[130px] max-w-[130px]">{item.currency}</td>
+                      <td className="py-3 min-w-[160px] max-w-[160px]">{item.pricingFee[0].category}</td>
+                      <td className="py-3 min-w-[80px] max-w-[80px]">
+                        {item.pricingFee[0].fees[0].variables[0].value}
+                      </td>
                       <td className="py-3 min-w-[160px] max-w-[160px]">{item.formulaName}</td>
                     </td>
 
@@ -290,7 +393,12 @@ const PricingTable = () => {
                             />
                           </svg>
                         </button>
-                        <button className="" onClick={() => {}}>
+                        <button
+                          className=""
+                          onClick={() => {
+                            deletePricing(item._id);
+                          }}
+                        >
                           {/* <svg
                                 width='20'
                                 height='20'
@@ -304,7 +412,7 @@ const PricingTable = () => {
                                 />
                               </svg> */}
 
-                          <DeleteIcon size={20} />
+                          <Trash2Icon size={20} />
                         </button>
                         <button className=" ">
                           <svg
@@ -324,6 +432,10 @@ const PricingTable = () => {
                     </td>
                   </tr>
                 ))
+              ) : fetching ? (
+                <div>
+                  <p className=" text-center py-4">Fetching Pricings...</p>
+                </div>
               ) : (
                 <tr className="border border-[#DADADA] rounded-2xl py-4 mt-4">
                   <td colSpan={9} className="text-center py-4">

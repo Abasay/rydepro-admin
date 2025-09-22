@@ -85,12 +85,15 @@ export interface GeneralDashboardContext {
   activeFormula: string;
   setActiveFormula: (formula: string) => void;
   deleteVariable: (id: string) => void;
+  deleteFeeType: (id: string, feeType: string) => void;
   deleteFormula: (id: string) => void;
   deleteZone: (id: string) => void;
   formulaOnEdit: Formula | null;
   setFormulaOnEdit: (formula: Formula | null) => void;
   showFormulaSetup: boolean;
   setShowFormulaSetup: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedZone: Zone | null;
+  setSelectedZone: (zone: Zone | null) => void;
 }
 
 export interface Formula {
@@ -110,7 +113,7 @@ export interface Variable {
   _id: string;
   category: string;
   variableName: string;
-  fee: { id: string; feeType: string; description: string; isActive: boolean }[];
+  fee: { _id: string; feeType: string; description: string; isActive: boolean }[];
 }
 export interface AdminDetails {
   id: string;
@@ -150,4 +153,5 @@ export interface Zone {
     latitude: number;
     longitude: number;
   };
+  geometry: any;
 }

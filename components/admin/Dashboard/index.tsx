@@ -397,6 +397,21 @@ const Dashboard = () => {
     }
   };
 
+  const vehicleSetupRef = React.useRef<HTMLDivElement>(null);
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (vehicleSetupRef.current && !vehicleSetupRef.current.contains(event.target as Node)) {
+      setShowModal(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleOutsideClick, true);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick, true);
+    };
+  }, [showModal, vehicleSetupRef]);
+
   useEffect(() => {
     // Check window width on client-side only
     const checkWidth = () => {
@@ -428,6 +443,17 @@ const Dashboard = () => {
           </>
         )} */}
 
+        {showModal && (
+          <div className=" min-w-[100%] min-h-[100vh]  grid place-content-center  h-[100vh] bg-[#00000099] absolute z-40">
+            <div
+              className=" border-[#FFFFFF] rounded-3xl z-50 bg-[#FFFFFF] grid place-content-center min-w-[90%] max-w-[90%] mx-auto h-[90vh] overflow-auto"
+              ref={vehicleSetupRef}
+            >
+              <Setup setShowModal={setShowModal} selectedVehicle={selectedVehicle} />
+            </div>
+          </div>
+        )}
+
         <div className=" absolute -top-10 z-50 w-full mx-auto grid place-content-center">
           {successText && <SuccessModal text={successText} handleClose={() => setSuccessText('')} />}
           {errorText && <ErrorModal text={errorText} handleClose={() => setErrorText('')} />}
@@ -438,29 +464,26 @@ const Dashboard = () => {
             settings.additionalSecurity.isPopUpOpened || settings.isAlertEnabled || authChanged
               ? 'brightness-75'
               : 'brightness-100'
-          } bg-[#F7F7F7]  min-h-screen flex relative  filter transition duration-500 `}
+          } bg-[#F7F7F7]  min-h-screen max-h-screen flex relative  filter transition duration-500 `}
         >
-          {showModal && (
-            <div className=" absolute border left-[5%] right-[5%] top-[20%] bottom-[10%] border-[#FFFFFF] rounded-3xl z-50 bg-[#FFFFFF] grid place-content-center min-w-[2902px] max-w-[2902px] mx-auto h-[1486px]">
-              <Setup setShowModal={setShowModal} selectedVehicle={selectedVehicle} />
-            </div>
-          )}
-          {showModal && (
-            <div className=" min-w-full max-3000:min-w-[3000px] max-3000:min-h-[1580px] min-h-full grid place-content-center  h-[100vh] bg-[#00000099] absolute z-40"></div>
-          )}{' '}
-          <div className="w-full flex gap-0 min-h-screen  border">
+          {/* {showModal && (
+          
+          )} */}{' '}
+          <div className="w-full flex gap-0 min-h-screen max-h-screen  border">
             <Sidebar />
-            <div className="w-full overflow-scroll scrollbar-hide flex flex-col h-full bg-[#FFFFFF]">
-              {/* <Header /> */}
+            <div className=" w-full overflow-scroll max-w-full scrollbar-hide flex flex-col ">
               <DBHeader />
-              {/**Settings */}
-              {isSettingsClicked && <Settings />}
+              <div className="w-full  scrollbar-hide flex flex-col h-full bg-[#FFFFFF] mt-[100px]">
+                {/* <Header /> */}
 
-              {!isSettingsClicked && SidebarComponentRenderer(activeHeader)}
+                {/**Settings */}
+                {isSettingsClicked && <Settings />}
 
-              {/* {USERHEADERS.includes(activeHeader) && <Users />}
+                {!isSettingsClicked && SidebarComponentRenderer(activeHeader)}
+
+                {/* {USERHEADERS.includes(activeHeader) && <Users />}
               {DRIVERHEADERS.includes(activeHeader) && <Drivers />} */}
-              {/* {activeHeader === 'Booking Table - Admin' && <BookingTable />}
+                {/* {activeHeader === 'Booking Table - Admin' && <BookingTable />}
               {activeHeader === 'Vehicle' && (
                 <VehicleTable
                   vehicles={vehicles}
@@ -477,10 +500,11 @@ const Dashboard = () => {
                   deleteService={deleteService}
                 />
               )} */}
-              {/* 
+                {/* 
               {activeHeader === 'Zone' && <Zone />}
               {activeHeader === 'Zone List' && <ZoneTable zones={[]} />} */}
-              {/* {activeHeader === 'Vehicle' && <Setup />} */}
+                {/* {activeHeader === 'Vehicle' && <Setup />} */}
+              </div>
             </div>
           </div>
         </section>

@@ -81,6 +81,9 @@ export const URLS = {
   setPricing: '/api/pricing/set-zone-pricing',
   deleteZone: '/admin/zones/delete-zone/',
   deleteVariable: '/api/pricing/delete-variable/',
+  deleteFeeType: '/api/pricing/delete-fee/',
   deleteFormula: '/api/pricing/delete-formula/',
   updateFormula: '/api/pricing/update-formula/',
+  getPricings: '/api/pricing/all-pricings',
+  deletePricing: '/api/pricing/delete-pricing/',
 };

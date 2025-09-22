@@ -253,12 +253,12 @@ const Sidebar = () => {
       }`}
     >
       <section className="flex flex-col">
-        <div className="h-[100px] border-r-[1px] flex gap-[32px] justify-center items-center">
+        <div className="h-[100px] border-r-[1px] flex gap-[32px] justify-center items-center fixed top-0 left-0 right-0 z-40 w-full max-w-[280px] bg-white">
           <Image src={RydeProLogo} alt="Rydepro Logo" width={78} height={64} className="h-[70px] w-[77.42px]" />
         </div>
         {!advancedSearch ? (
           <>
-            <div className=" flex flex-col gap-6">
+            <div className=" flex flex-col gap-6 mt-[100px]">
               <div className=" relative flex gap-2 px-4 mx-auto items-center justify-center py-3 min-w-[200px] border-b rounded-lg max-w-[208px] min-h-[45px] max-h-[48px]">
                 <span className="">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

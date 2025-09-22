@@ -158,11 +158,11 @@ const Setup = ({
     }
   }, [selectedVehicle]);
   return (
-    <section className="  flex flex-col gap-[84px] relative">
-      <button className=" absolute -top-16 -right-24" onClick={() => setShowModal(false)}>
+    <section className=" relative flex flex-col gap-[84px] ml-[450px] mt-96 p-20 w-full max-w-[2250px]">
+      <button className=" absolute top-16 -right-10" onClick={() => setShowModal(false)}>
         <X />
       </button>
-      <div className=" flex justify-end">
+      <div className=" flex justify-end ">
         <Toggle
           toggleText="Active"
           active={formik.values.inActive}

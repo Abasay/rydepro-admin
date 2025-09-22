@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import Mail from './mail.svg';
 import Print from './print.svg';
 import Delete from './delete.svg';
@@ -9,9 +9,21 @@ import Froward from './forward.svg';
 import { DeleteIcon } from 'lucide-react';
 import { Zone } from '@/types/GlobalState';
 import { useDashboardContext } from '@/contexts/DashboardContext';
+import dynamic from 'next/dynamic';
+const OverpassMap = dynamic(() => import('./OverpassMapWithInput'), { ssr: false });
 
 const ZoneTable = ({ zones }: { zones: Zone[] }) => {
   const { deleteZone } = useDashboardContext();
+  const { selectedZone, setSelectedZone } = useDashboardContext();
+  const [showMap, setShowMap] = useState(false);
+
+  const handleZoneClick = (zone: Zone) => {
+    setSelectedZone(zone);
+    setShowMap(true);
+  };
+
+  if (showMap && selectedZone) return <OverpassMap selectedZoneData={selectedZone} viewMode={true} />;
+
   return (
     <section className=" mt-6 flex flex-col gap-4 px-6 min-h-[300px] max-h-[771px]">
       <div className=" flex justify-between items-center w-full">
@@ -107,7 +119,13 @@ const ZoneTable = ({ zones }: { zones: Zone[] }) => {
             <tbody className=" border border-[#DADADA] rounded-2xl py-4 mt-4">
               {zones.length > 0 ? (
                 zones.map((item, index) => (
-                  <tr key={index} className="border-b flex pt-2 hover:bg-gray-50">
+                  <tr
+                    key={index}
+                    className="border-b flex pt-2 hover:bg-gray-50"
+                    onClick={() => {
+                      handleZoneClick(item);
+                    }}
+                  >
                     <td className="py-3 mr-4 px-4">
                       <input
                         type="checkbox"

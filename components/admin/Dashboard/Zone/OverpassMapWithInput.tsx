@@ -56,6 +56,23 @@ interface LocationSuggestion {
   boundingbox?: string[];
 }
 
+interface OverpassMapProps {
+  selectedZoneData?: {
+    zoneName: string;
+    country: string;
+    state: string;
+    city: string;
+    county: string;
+    timeZone: string;
+    geometry: any;
+    coordinates?: {
+      latitude: number;
+      longitude: number;
+    };
+  };
+  viewMode?: boolean;
+}
+
 const fixLeafletIcons = () => {
   // Only run on client-side
   if (typeof window !== 'undefined') {
@@ -233,7 +250,7 @@ const simplifyGeoJSON = (geoJSON: any, tolerance = 0.0001): any => {
   }
 };
 
-const OverpassMap = () => {
+const OverpassMap = ({ selectedZoneData, viewMode = false }: OverpassMapProps) => {
   const { setSuccessText, setErrorText } = useDB();
   const { getZones } = useDashboardContext();
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -506,12 +523,12 @@ const OverpassMap = () => {
     }
   };
 
-  // Style for area outlines
+  // Style for area outlines - Google Maps inspired
   const areaStyle = {
-    fillColor: '#F89090',
-    color: '#F79090',
-    weight: 2,
-    fillOpacity: 0.2,
+    fillColor: '#4285F4',
+    color: '#1a73e8',
+    weight: 3,
+    fillOpacity: 0.4,
   };
 
   // Handle draw events
@@ -560,6 +577,74 @@ const OverpassMap = () => {
         ref={geoJSONRef}
       />
     );
+  };
+
+  // Add effect to handle zone viewing
+  useEffect(() => {
+    if (selectedZoneData && viewMode) {
+      console.log(selectedZoneData);
+      // Auto-populate form with zone data
+      formik.setValues({
+        zone: selectedZoneData.zoneName,
+        country: selectedZoneData.country,
+        state: selectedZoneData.state,
+        city: selectedZoneData.city,
+        county: selectedZoneData.county,
+        timeZone: selectedZoneData.timeZone,
+      });
+
+      // Set the geometry data
+      if (selectedZoneData.geometry) {
+        setSelectedLocation({
+          center: [selectedZoneData?.coordinates?.latitude || 0, selectedZoneData?.coordinates?.longitude || 0],
+          geoJSON: selectedZoneData.geometry,
+          originalGeoJSON: selectedZoneData.geometry,
+          name: selectedZoneData.zoneName,
+        });
+      }
+
+      // If coordinates are available, trigger search suggestion
+      if (selectedZoneData) {
+        const [lat, lng] = [
+          selectedZoneData?.coordinates?.latitude || 0,
+          selectedZoneData?.coordinates?.longitude || 0,
+        ];
+        handleOverpassSearch(lat, lng, selectedZoneData.zoneName);
+      }
+    }
+  }, [selectedZoneData, viewMode]);
+
+  // Function to search Overpass API and trigger handleSelectSuggestion
+  const handleOverpassSearch = async (lat: number, lng: number, zoneName: string) => {
+    try {
+      // Search for the location using Nominatim reverse geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&polygon_geojson=1`
+      );
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data) {
+        // Create a suggestion object similar to what handleSelectSuggestion expects
+        const suggestion = {
+          display_name: data.display_name || zoneName,
+          lat: lat,
+          lon: lng,
+          geojson: data?.geojson,
+          boundingbox: data.boundingbox,
+        };
+
+        //We should be saving a location's latitude and longitude toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+
+        console.log(suggestion);
+
+        // Trigger the existing handleSelectSuggestion function
+        await handleSelectSuggestion(suggestion as any);
+      }
+    } catch (error) {
+      console.error('Error fetching location data:', error);
+    }
   };
 
   return (
@@ -655,13 +740,15 @@ const OverpassMap = () => {
                         key={idx}
                         className={`px-3 py-2 ${
                           suggestions.length - 1 === idx ? ' ' : ' border-b'
-                        } h-14 border-gray-200 cursor-pointer hover:bg-gray-100 flex items-center gap-2`}
+                        } h-14 border-gray-200 cursor-pointer hover:bg-gray-100 flex items-center gap-2 break-words`}
                         onClick={() => handleSelectSuggestion(suggestion)}
                       >
                         <span>
                           <Image src={LocationIcon} alt="" width={20} height={20} className="w-[20px] h-[20px]" />
                         </span>
-                        {suggestion.display_name}
+                        {suggestion.display_name.length > 80
+                          ? suggestion.display_name.slice(0, 80) + '...'
+                          : suggestion.display_name}
                       </div>
                     ))}
                   </div>
@@ -755,7 +842,7 @@ const OverpassMap = () => {
 
             <div className="flex items-center gap-4">
               <Button
-                className="bg-[#0E0E0E] rounded-lg h-8 w-20 p-2 text-[#FAF6F6] text-xs font-medium"
+                className="bg-[#0E0E0E] rounded-lg h-8 w-max p-2 text-[#FAF6F6] text-xs font-medium"
                 onClick={() => formik.handleSubmit()}
                 text={formik.isSubmitting ? 'Saving Zone...' : 'Save'}
               />

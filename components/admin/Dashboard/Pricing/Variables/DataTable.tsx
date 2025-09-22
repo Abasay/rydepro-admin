@@ -19,7 +19,7 @@ interface DataTableProps {
 }
 
 export const DataTable: React.FC<DataTableProps> = ({ data }) => {
-  const { activeVariable, deleteVariable, variables } = useDashboardContext();
+  const { activeVariable, deleteVariable, variables, deleteFeeType } = useDashboardContext();
 
   const [dataTodisplay, setDataToDisplay] = React.useState<Variable[]>(variables);
   const { setVariableOnEdit, setShowVariableSetup } = useVariables();
@@ -39,7 +39,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
   }, [variables]);
 
   return (
-    <div className="w-full border rounded-lg overflow-x-auto">
+    <div className="w-full border rounded-lg overflow-x-auto h-full max-h-screen">
       <table className="w-full">
         <thead>
           <tr className="bg-gray-50 border-b">
@@ -53,10 +53,10 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
         <tbody>
           {dataTodisplay.length > 0 ? (
             dataTodisplay.map((item) => (
-              <React.Fragment key={item.id}>
+              <React.Fragment key={item._id}>
                 {item.fee.map((fee, feeIndex) => (
                   <tr
-                    key={`${item.id}-${fee.id}`}
+                    key={`${item._id}-${fee._id}`}
                     className={`hover:bg-gray-50 ${
                       feeIndex !== item.fee.length - 1 ? 'border-b border-dashed' : 'border-b'
                     }`}
@@ -108,7 +108,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             <TooltipTrigger asChild>
                               <button
                                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                onClick={() => deleteVariable(item._id)}
+                                onClick={() => deleteFeeType(fee._id, fee.feeType)}
                               >
                                 <Trash2 size={18} className="text-gray-600" />
                               </button>
